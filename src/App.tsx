@@ -36,7 +36,7 @@ function App() {
 
     // Cálculo de pagos
     const pagoTrabajadores = Math.max(ventaNeta * 0.04, 2400);
-    const pagoImpuestos = Math.min(ventaNeta * 0.03, 2300);
+    const pagoImpuestos = 2100;
     const gananciaNeta = gananciaBruta - pagoTrabajadores - pagoImpuestos;
 
     // Distribución

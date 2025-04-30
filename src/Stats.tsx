@@ -24,14 +24,23 @@ const Stats = ({
     );
   };
 
+  function TodayDate() {
+    const today = new Date();
+    const formattedDate = `${today.getDate()}/${
+      today.getMonth() + 1
+    }/${today.getFullYear()}`;
+
+    return <p className="font-thin text-2xl">{formattedDate}</p>;
+  }
+
   return (
     <div className="flex flex-col">
       <div className=" py-24 sm:py-32">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           {/* ----------------------------- */}
 
-          <h2 className="text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl mb-6">
-            Resumen general{" "}
+          <h2 className="text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl mb-6 flex justify-between items-end">
+            Resumen general: {TodayDate()}
           </h2>
           <dl className="grid grid-cols-4 gap-8 lg:grid-cols-4 items-start justify-start">
             <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l-1 border-stone-50 pl-4">
@@ -42,7 +51,17 @@ const Stats = ({
             </div>
 
             <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l-1 border-stone-50 pl-4">
-              <dt className="text-base/7 text-amber-100">Ganancia bruta</dt>
+              <dt className="text-base/7 text-amber-100">
+                Ganancia bruta{" "}
+                <span >
+                  {(
+                    (Number(formData.gananciaBruta) /
+                      Number(formData.ventaNeta)) *
+                    100
+                  ).toFixed(2)}
+                  %
+                </span>
+              </dt>
               <dd className="order-first text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl">
                 {formatCurrency(+formData.gananciaBruta)}
               </dd>
@@ -69,7 +88,7 @@ const Stats = ({
             <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l-1 border-stone-50 pl-4">
               <dt className="text-base/7 text-orange-400">Ganancia neta</dt>
               <dd className="order-first text-3xl font-semibold tracking-tight text-orange-400 sm:text-5xl">
-                {formatCurrency(distribution.gananciaNeta)}
+                {formatCurrency(distribution.gananciaNeta)}{" "}
               </dd>
             </div>
           </dl>

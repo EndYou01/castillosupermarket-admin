@@ -97,16 +97,15 @@ function App() {
           />
         ) : (
           <div className=" w-full mx-auto mt-10 p-6">
-           
-            <h2 className="text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl mb-6">
-            Registro de Ventas
-          </h2>
+            <h2 className="text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl mb-6 text-center">
+              Registro de Ventas
+            </h2>
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label
                   htmlFor="ventaNeta"
-                  className="block text-2xl font-medium text-amber-50 mb-1"
+                  className="block  text-xl  text-amber-50 mb-1"
                 >
                   Venta Neta
                 </label>
@@ -116,7 +115,7 @@ function App() {
                   name="ventaNeta"
                   value={formData.ventaNeta}
                   onChange={handleInputChange}
-                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 text-amber-50 ${
+                  className={`w-full bg-amber-50 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 text-stone-800 ${
                     errors.ventaNeta
                       ? "border-red-400 focus:ring-red-200"
                       : "border-gray-300 focus:ring-blue-200"
@@ -124,7 +123,7 @@ function App() {
                   placeholder="0.00"
                 />
                 {errors.ventaNeta && (
-                  <p className="mt-1 text-sm text-red-400">
+                  <p className="mt-1 text-sm text-red-500">
                     {errors.ventaNeta}
                   </p>
                 )}
@@ -133,7 +132,7 @@ function App() {
               <div>
                 <label
                   htmlFor="gananciaBruta"
-                  className="block text-2xl font-medium text-amber-50 mb-1"
+                  className="block text-xl  text-amber-50 mb-1"
                 >
                   Ganancia Bruta
                 </label>
@@ -143,7 +142,7 @@ function App() {
                   name="gananciaBruta"
                   value={formData.gananciaBruta}
                   onChange={handleInputChange}
-                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 text-amber-50 ${
+                  className={`w-full bg-amber-50 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 text-stone-800 ${
                     errors.gananciaBruta
                       ? "border-red-400 focus:ring-red-200"
                       : "border-gray-300 focus:ring-blue-200"
@@ -151,7 +150,7 @@ function App() {
                   placeholder="0.00"
                 />
                 {errors.gananciaBruta && (
-                  <p className="mt-1 text-sm text-red-400">
+                  <p className="mt-1 text-sm text-red-500">
                     {errors.gananciaBruta}
                   </p>
                 )}

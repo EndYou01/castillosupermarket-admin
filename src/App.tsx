@@ -31,6 +31,8 @@ function App() {
   };
 
   const calculateDistribution = () => {
+    let kilos = 0;
+
     const ventaNeta = parseFloat(formData.ventaNeta) || 0;
     const gananciaBruta = parseFloat(formData.gananciaBruta) || 0;
 
@@ -39,22 +41,32 @@ function App() {
     const pagoImpuestos = 2100;
     const gananciaNeta = gananciaBruta - pagoTrabajadores - pagoImpuestos;
 
+    const calculateKilos = (number: number, calculate?: boolean) => {
+      const roundedNumber = Math.floor(number / 10) * 10;
+
+      if (calculate) {
+        kilos = kilos + (number - roundedNumber);
+      }
+
+      return roundedNumber;
+    };
+
     // Distribución
     const distribucion: IDistribution = {
       gananciaNeta,
-      pagoTrabajadores,
-      pagoImpuestos,
+      pagoTrabajadores: calculateKilos(pagoTrabajadores, true),
+      pagoImpuestos: calculateKilos(pagoImpuestos, true),
       administradores: {
-        total: gananciaNeta * 0.4,
-        alfonso: gananciaNeta * 0.2,
-        jose: gananciaNeta * 0.2,
+        total: calculateKilos(gananciaNeta * 0.4),
+        alfonso: calculateKilos(gananciaNeta * 0.2, true),
+        jose: calculateKilos(gananciaNeta * 0.2, true),
       },
       inversores: {
-        total: gananciaNeta * 0.55,
-        senjudo: gananciaNeta * 0.2688,
-        adalberto: gananciaNeta * 0.2811,
+        total: calculateKilos(gananciaNeta * 0.55),
+        senjudo: calculateKilos(gananciaNeta * 0.2688, true),
+        adalberto: calculateKilos(gananciaNeta * 0.2811, true),
       },
-      reinversion: gananciaNeta * 0.05,
+      reinversion: gananciaNeta * 0.05 + kilos,
     };
 
     return distribucion;

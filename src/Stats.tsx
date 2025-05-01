@@ -14,33 +14,52 @@ const Stats = ({
   };
 
   const formatCurrency = (amount: number) => {
+    const integerAmount = Math.floor(amount); // o Math.trunc(amount)
     return (
       <p>
         {new Intl.NumberFormat("es-MX", {
           currency: "MXN",
-        }).format(amount)}{" "}
-        <span className="font-xs font-thin">cup</span>
+          minimumFractionDigits: 0, // Asegura que no muestre decimales
+          maximumFractionDigits: 0, // Asegura que no muestre decimales
+        }).format(integerAmount)}{" "}
+        <span className="text-md font-thin">cup</span>
       </p>
     );
   };
 
   function TodayDate() {
     const today = new Date();
-    const formattedDate = `${today.getDate()}/${
-      today.getMonth() + 1
-    }/${today.getFullYear()}`;
-
-    return <p className="font-thin text-2xl">{formattedDate}</p>;
+    
+    // Formatea la fecha en estilo "día/mes/año" (ej: "05/01/2024")
+    const formattedDate = today.toLocaleDateString("es-MX", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
+  
+    // Formatea la hora en estilo "HH:MM" (ej: "14:30")
+    const formattedTime = today.toLocaleTimeString("es-MX", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false, // Formato 24 horas
+    });
+  
+    return (
+      <p className="font-thin text-2xl">
+        {formattedTime} - {formattedDate}
+      </p>
+    );
   }
 
   return (
     <div className="flex flex-col">
       <div className=" py-24 sm:py-32">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl px-3 lg:px-8">
           {/* ----------------------------- */}
 
-          <h2 className="text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl mb-6 flex justify-between items-end">
-            Resumen general: {TodayDate()}
+          <h2 className="text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl mb-6 flex flex-col">
+            Resumen general
+            {TodayDate()}
           </h2>
           <dl className="grid grid-cols-4 gap-8 lg:grid-cols-4 items-start justify-start">
             <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l-1 border-stone-50 pl-4">
@@ -53,7 +72,7 @@ const Stats = ({
             <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l-1 border-stone-50 pl-4">
               <dt className="text-base/7 text-amber-100">
                 Ganancia bruta{" "}
-                <span >
+                <span>
                   {(
                     (Number(formData.gananciaBruta) /
                       Number(formData.ventaNeta)) *
@@ -122,7 +141,7 @@ const Stats = ({
                 Total administradores
               </dt>
               <dd className="order-first text-3xl font-semibold tracking-tight text-orange-400 sm:text-5xl">
-                {formatCurrency(distribution.administradores.total)}
+                {formatCurrency(distribution.administradores.jose + distribution.administradores.alfonso)}
               </dd>
             </div>
           </dl>
@@ -135,7 +154,7 @@ const Stats = ({
           <dl className="grid grid-cols-4 gap-8  lg:grid-cols-4">
             <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l-1 border-stone-50 pl-4">
               <dt className="text-base/7 text-amber-100">
-                Adalberto <span className="font-thin">28.11%</span>
+                Alber <span className="font-thin">28.11%</span>
               </dt>
               <dd className="order-first text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl">
                 {formatCurrency(distribution.inversores.adalberto)}
@@ -154,18 +173,18 @@ const Stats = ({
             <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l-1 border-stone-50 pl-4">
               <dt className="text-base/7 text-orange-400">Total inversores</dt>
               <dd className="order-first text-3xl font-semibold tracking-tight text-orange-400 sm:text-5xl">
-                {formatCurrency(distribution.inversores.total)}
+                {formatCurrency(distribution.inversores.adalberto + distribution.inversores.senjudo)}
               </dd>
             </div>
           </dl>
 
           {/* ----------------------------- */}
           <h2 className="text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl mt-14 mb-6 flex justify-between">
-            Reinversion <span className="sm:text-md font-thin">5%</span>
+            Reinversión <span className="sm:text-md font-thin">5%</span>
           </h2>
           <dl className="grid grid-cols-4 gap-8  lg:grid-cols-4">
             <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l-1 border-stone-50 pl-4">
-              <dt className="text-base/7 text-orange-400">Total reinversion</dt>
+              <dt className="text-base/7 text-orange-400">Total reinversión</dt>
               <dd className="order-first text-3xl font-semibold tracking-tight text-orange-400 sm:text-5xl">
                 {formatCurrency(distribution.reinversion)}
               </dd>

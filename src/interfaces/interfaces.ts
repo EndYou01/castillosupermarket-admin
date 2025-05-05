@@ -18,4 +18,6 @@ export interface IDistribution {
 export interface FormData {
   ventaNeta: string;
   gananciaBruta: string;
+  fechaInicio?: string,
+  fechaFin?: string,
 }

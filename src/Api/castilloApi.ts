@@ -1,13 +1,14 @@
+import { DateTime } from 'luxon';
+
 export const getVentasDelDia = async () => {
   const storeId = import.meta.env.VITE_STORE_ID;
+  
+  const today = DateTime.now().setZone("America/Havana");
 
-  const today = new Date();
-  const year = today.getFullYear();
-  const month = String(today.getMonth() + 1).padStart(2, "0");
-  const day = String(today.getDate()).padStart(2, "0");
+  // Convertimos a UTC y luego a formato ISO con 'Z'
+  const desde = today.startOf('day').toUTC().toISO(); // Ej: 2025-05-07T04:00:00.000Z
+  const hasta = today.endOf('day').toUTC().toISO();   // Ej: 2025-05-08T03:59:59.999Z
 
-  const desde = `${year}-${month}-${day}T00:00:00Z`;
-  const hasta = `${year}-${month}-${day}T23:59:59Z`;
 
   const requestOptions = {
     method: "GET",
@@ -24,6 +25,8 @@ export const getVentasDelDia = async () => {
     }
 
     const data = await response.json();
+
+    console.log({data})
     return data;
   } catch (error) {
     console.error("Error obteniendo ventas del día:", error);

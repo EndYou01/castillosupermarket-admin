@@ -1,4 +1,4 @@
-import castilloLogo from "./assets/castillo_logo.png";
+import castilloLogo from "../assets/castillo_logo.png";
 import Stats from "./Stats";
 
 function App() {
@@ -12,7 +12,7 @@ function App() {
         />
       </div>
 
-      <div className="w-full flex justify-center items-center">
+      <div className="w-full flex flex-col justify-center items-center py-24 sm:py-32">
         <Stats />
       </div>
     </div>

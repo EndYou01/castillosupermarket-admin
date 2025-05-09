@@ -1,13 +1,16 @@
 import { DateTime } from 'luxon';
 
-export const getVentasDelDia = async () => {
-  const storeId = import.meta.env.VITE_STORE_ID;
+export const getVentasDelDia = async (desdeStr?: string, hastaStr?: string) => {
   
-  const today = DateTime.now().setZone("America/Havana");
+  const now = DateTime.now().setZone("America/Havana");
 
-  // Convertimos a UTC y luego a formato ISO con 'Z'
-  const desde = today.startOf('day').toUTC().toISO(); // Ej: 2025-05-07T04:00:00.000Z
-  const hasta = today.endOf('day').toUTC().toISO();   // Ej: 2025-05-08T03:59:59.999Z
+  const desde = desdeStr
+    ? DateTime.fromISO(desdeStr).startOf('day').toUTC().toISO()
+    : now.startOf('day').toUTC().toISO();
+
+  const hasta = hastaStr
+    ? DateTime.fromISO(hastaStr).endOf('day').toUTC().toISO()
+    : now.endOf('day').toUTC().toISO();
 
 
   const requestOptions = {
@@ -16,7 +19,7 @@ export const getVentasDelDia = async () => {
 
   try {
     const response = await fetch(
-      `https://castillosupermarket-backend.vercel.app/ventas/rango?store_id=${storeId}&desde=${desde}&hasta=${hasta}&limit=200`,
+      `http://localhost:3000/ventas/rango?&desde=${desde}&hasta=${hasta}`,
       requestOptions
     );
 
@@ -26,7 +29,6 @@ export const getVentasDelDia = async () => {
 
     const data = await response.json();
 
-    console.log({data})
     return data;
   } catch (error) {
     console.error("Error obteniendo ventas del día:", error);

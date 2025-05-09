@@ -19,7 +19,7 @@ export const getVentasDelDia = async (desdeStr?: string, hastaStr?: string) => {
 
   try {
     const response = await fetch(
-      `http://castillosupermarket-backend.vercel.app/ventas/rango?&desde=${desde}&hasta=${hasta}`,
+      `https://castillosupermarket-backend.vercel.app/ventas/rango?&desde=${desde}&hasta=${hasta}`,
       requestOptions
     );
 

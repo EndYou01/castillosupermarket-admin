@@ -14,6 +14,7 @@ const Stats = () => {
     fechaInicio: "",
     fechaFin: "",
   });
+  const [distribution, setDistribution] = useState<IDistribution | null>(null);
   const [selectedRange, setSelectedRange] = useState<DateRange | undefined>();
 
   useEffect(() => {
@@ -25,6 +26,7 @@ const Stats = () => {
           ventaNeta: data.ventaNeta.toString(),
           gananciaBruta: data.beneficioBruto.toString(),
         }));
+        setDistribution(data.distribucion);
       } catch (error) {
         console.error("Error cargando ventas:", error);
         setError(JSON.stringify(error));
@@ -51,56 +53,13 @@ const Stats = () => {
         fechaInicio: desde,
         fechaFin: hasta,
       });
+      setDistribution(data.distribucion);
     } catch (error) {
       console.error("Error cargando ventas:", error);
     } finally {
       setLoading(false);
     }
   };
-
-  const calculateDistribution = (): IDistribution => {
-    let kilos = 0;
-    let pagoImpuestos = 2100;
-
-    if (formData.fechaInicio && formData.fechaFin) {
-      const dias =
-        (new Date(formData.fechaFin).getTime() -
-          new Date(formData.fechaInicio).getTime()) /
-          (1000 * 60 * 60 * 24) +
-        1;
-      pagoImpuestos *= Math.ceil(dias);
-    }
-
-    const ventaNeta = parseFloat(formData.ventaNeta) || 0;
-    const gananciaBruta = parseFloat(formData.gananciaBruta) || 0;
-    const pagoTrabajadores = Math.max(ventaNeta * 0.04, 2400);
-    const gananciaNeta = gananciaBruta - pagoTrabajadores - pagoImpuestos;
-
-    const calcularKilos = (valor: number, acumular = false) => {
-      const redondeado = Math.floor(valor / 10) * 10;
-      if (acumular) kilos += valor - redondeado;
-      return redondeado;
-    };
-
-    return {
-      gananciaNeta,
-      pagoTrabajadores: calcularKilos(pagoTrabajadores, true),
-      pagoImpuestos: calcularKilos(pagoImpuestos, true),
-      administradores: {
-        total: calcularKilos(gananciaNeta * 0.4),
-        alfonso: calcularKilos(gananciaNeta * 0.2, true),
-        jose: calcularKilos(gananciaNeta * 0.2, true),
-      },
-      inversores: {
-        total: calcularKilos(gananciaNeta * 0.55),
-        senjudo: calcularKilos(gananciaNeta * 0.2688, true),
-        adalberto: calcularKilos(gananciaNeta * 0.2811, true),
-      },
-      reinversion: gananciaNeta * 0.05 + kilos,
-    };
-  };
-
-  const distribution = calculateDistribution();
 
   const formatCurrency = (amount: number) =>
     new Intl.NumberFormat("es-MX", {
@@ -152,7 +111,7 @@ const Stats = () => {
           </div>
         ) : (
           <div>
-            {error ? (
+            {error || !distribution ? (
               <p className="text-red-500">{error}</p>
             ) : (
               <div className="mx-auto max-w-7xl px-3 lg:px-8 mt-12">

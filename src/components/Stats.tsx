@@ -113,14 +113,10 @@ const Stats = () => {
               <p className="text-red-500">{error}</p>
             ) : (
               <div className="mx-auto max-w-7xl px-3 lg:px-8 mt-12">
-                {totalDays > 1 && (
-                  <h2 className="text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl mt-14 mb-6 flex justify-between items-center">
-                    Recibos procesados
-                    <span className="sm:text-md font-thin">
-                      {receiptsAmount}
-                    </span>
-                  </h2>
-                )}
+                <h2 className="text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl mt-14 mb-6 flex justify-between items-center">
+                  Recibos procesados
+                  <span className="sm:text-md font-thin">{receiptsAmount}</span>
+                </h2>
                 {/* ----------------------------- */}
 
                 <dl className="grid grid-cols-4 gap-8 lg:grid-cols-6 items-start justify-start">
@@ -159,25 +155,18 @@ const Stats = () => {
                     </div>
                   ) : (
                     <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l-1 border-stone-50 pl-4">
-                      <dt className="text-base/7 text-amber-100">Recibos</dt>
+                      <dt className="text-base/7 text-amber-100">
+                        Promedio ventas recibo
+                      </dt>
                       <dd className="order-first text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl">
-                        {receiptsAmount}
+                        {formatCurrency(+formData.ventaNeta / receiptsAmount)}
                       </dd>
                     </div>
                   )}
 
                   <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l-1 border-stone-50 pl-4">
-                    <dt className="text-base/7 text-amber-100">Costos</dt>
-                    <dd className="order-first text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl">
-                      {formatCurrency(
-                        +formData.ventaNeta - +formData.gananciaBruta
-                      )}
-                    </dd>
-                  </div>
-
-                  <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l-1 border-stone-50 pl-4">
                     <dt className="text-base/7 text-amber-100">
-                      Pago trabajadores
+                      Salarios
                     </dt>
                     <dd className="order-first text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl">
                       {formatCurrency(distribution.pagoTrabajadores)}
@@ -189,10 +178,19 @@ const Stats = () => {
 
                   <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l-1 border-stone-50 pl-4">
                     <dt className="text-base/7 text-amber-100">
-                      Pago impuestos
+                      Impuestos
                     </dt>
                     <dd className="order-first text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl">
                       {formatCurrency(distribution.pagoImpuestos)}
+                    </dd>
+                  </div>
+
+                  <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l-1 border-stone-50 pl-4">
+                    <dt className="text-base/7 text-amber-100">
+                      Gastos extra
+                    </dt>
+                    <dd className="order-first text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl">
+                      {formatCurrency(3150)}
                     </dd>
                   </div>
 

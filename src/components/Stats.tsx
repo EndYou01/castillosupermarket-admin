@@ -4,6 +4,7 @@ import { getVentasDelDia } from "../Api/castilloApi";
 import { DatePickerWithRange } from "./shadcn/DatePickerWithRange";
 import { DateRange } from "react-day-picker";
 import { Button } from "./shadcn/Button";
+import LoadingSpin from "./LoadingSpin";
 
 const Stats = () => {
   const [loading, setLoading] = useState(true);
@@ -16,6 +17,7 @@ const Stats = () => {
   });
   const [distribution, setDistribution] = useState<IDistribution | null>(null);
   const [selectedRange, setSelectedRange] = useState<DateRange | undefined>();
+  const [receiptsAmount, setReceiptsAmount] = useState<number>(0);
 
   const search = window.location.search;
   const params = new URLSearchParams(search);
@@ -25,12 +27,16 @@ const Stats = () => {
     const loadVentas = async () => {
       try {
         const data = await getVentasDelDia();
-        setFormData((prev) => ({
-          ...prev,
-          ventaNeta: data.ventaNeta.toString(),
-          gananciaBruta: data.beneficioBruto.toString(),
-        }));
-        setDistribution(data.distribucion);
+        if (data) {
+          setFormData((prev) => ({
+            ...prev,
+            ventaNeta: data.ventaNeta.toString(),
+            gananciaBruta: data.beneficioBruto.toString(),
+          }));
+          setDistribution(data.distribucion);
+
+          setReceiptsAmount(data.recibosProcesados);
+        }
       } catch (error) {
         console.error("Error cargando ventas:", error);
         setError(JSON.stringify(error));
@@ -51,13 +57,16 @@ const Stats = () => {
         ? selectedRange.to.toISOString().split("T")[0]
         : desde;
       const data = await getVentasDelDia(desde, hasta);
-      setFormData({
-        ventaNeta: data.ventaNeta.toString(),
-        gananciaBruta: data.beneficioBruto.toString(),
-        fechaInicio: desde,
-        fechaFin: hasta,
-      });
-      setDistribution(data.distribucion);
+      if (data) {
+        setFormData({
+          ventaNeta: data.ventaNeta.toString(),
+          gananciaBruta: data.beneficioBruto.toString(),
+          fechaInicio: desde,
+          fechaFin: hasta,
+        });
+        setDistribution(data.distribucion);
+        setReceiptsAmount(data.recibosProcesados);
+      }
     } catch (error) {
       console.error("Error cargando ventas:", error);
     } finally {
@@ -94,35 +103,17 @@ const Stats = () => {
           </div>
         </div>
         {loading ? (
-          <div className="mt-20 flex flex-col items-center justify-center text-white text-xl">
-            <svg
-              className="animate-spin h-10 w-10 text-amber-400 mb-4"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-            >
-              <circle
-                className="opacity-25"
-                cx="12"
-                cy="12"
-                r="10"
-                stroke="currentColor"
-                strokeWidth="4"
-              ></circle>
-              <path
-                className="opacity-75"
-                fill="currentColor"
-                d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-              ></path>
-            </svg>
-            <span>Cargando datos del día...</span>
-          </div>
+          <LoadingSpin />
         ) : (
           <div>
             {error || !distribution ? (
               <p className="text-red-500">{error}</p>
             ) : (
               <div className="mx-auto max-w-7xl px-3 lg:px-8 mt-12">
+                <h2 className="text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl mt-14 mb-6 flex justify-between items-center">
+                  Recibos procesados
+                  <span className="sm:text-md font-thin">{receiptsAmount}</span>
+                </h2>
                 {/* ----------------------------- */}
 
                 <dl className="grid grid-cols-4 gap-8 lg:grid-cols-6 items-start justify-start">
@@ -236,7 +227,10 @@ const Stats = () => {
 
                   <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l-1 border-stone-50 pl-4">
                     <dt className="text-base/7 text-amber-100">
-                      Senjudo <span className="font-thin">26.88%</span>
+                      Senjudo{" "}
+                      <span className="font-thin">
+                        {showAllInvestors ? "21.26%" : "26.88%"}
+                      </span>
                     </dt>
                     <dd className="order-first text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl">
                       {showAllInvestors
@@ -251,7 +245,7 @@ const Stats = () => {
                     <>
                       <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l-1 border-stone-50 pl-4">
                         <dt className="text-base/7 text-amber-100">
-                          Rosa <span className="font-thin">10.4%</span>
+                          Rosa <span className="font-thin">2.81%</span>
                         </dt>
                         <dd className="order-first text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl">
                           {formatCurrency(
@@ -262,7 +256,7 @@ const Stats = () => {
 
                       <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l-1 border-stone-50 pl-4">
                         <dt className="text-base/7 text-amber-100">
-                          Alesso <span className="font-thin">10.4%%</span>
+                          Alesso <span className="font-thin">2.81%%</span>
                         </dt>
                         <dd className="order-first text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl">
                           {formatCurrency(

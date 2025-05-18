@@ -43,7 +43,7 @@ export function DatePickerWithRange({
           >
             <CalendarIcon />
             {date?.from ? (
-              date.to ? (
+              date.to && !isNaN(date.to.getTime()) ? (
                 <>
                   {format(date.from, "LLL dd, y")} -{" "}
                   {format(date.to, "LLL dd, y")}
@@ -57,7 +57,7 @@ export function DatePickerWithRange({
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-full p-0" align="start">
-        <Calendar
+          <Calendar
             initialFocus
             mode="range"
             defaultMonth={date?.from}
@@ -65,7 +65,7 @@ export function DatePickerWithRange({
             onSelect={setDate}
             numberOfMonths={1}
             fromDate={thirtyDaysAgo} // ✅ mínimo hace 30 días
-            toDate={today}            // ✅ máximo hoy
+            toDate={today} // ✅ máximo hoy
           />
         </PopoverContent>
       </Popover>

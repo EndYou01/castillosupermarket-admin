@@ -1,4 +1,5 @@
 import { DateTime } from 'luxon';
+import { IVentasResponse } from '../interfaces/interfaces';
 
 export const getVentasDelDia = async (desdeStr?: string, hastaStr?: string) => {
   
@@ -27,7 +28,7 @@ export const getVentasDelDia = async (desdeStr?: string, hastaStr?: string) => {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    const data = await response.json();
+    const data: IVentasResponse = await response.json();
 
     return data;
   } catch (error) {

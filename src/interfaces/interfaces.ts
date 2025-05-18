@@ -18,8 +18,8 @@ export interface IDistribution {
 export interface FormData {
   ventaNeta: string;
   gananciaBruta: string;
-  fechaInicio?: string,
-  fechaFin?: string,
+  fechaInicio?: string;
+  fechaFin?: string;
 }
 
 export interface IVentasResponse {
@@ -30,19 +30,20 @@ export interface IVentasResponse {
   beneficioBruto: number;
   recibosProcesados: number;
   distribucion: {
-      gananciaNeta: number;
-      pagoTrabajadores: number;
-      pagoImpuestos: number;
-      administradores: {
-          total: number;
-          alfonso: number;
-          jose: number;
-      };
-      inversores: {
-          total: number;
-          senjudo: number;
-          adalberto: number;
-      };
-      reinversion: number;
+    diasProcesados: number;
+    gananciaNeta: number;
+    pagoTrabajadores: number;
+    pagoImpuestos: number;
+    administradores: {
+      total: number;
+      alfonso: number;
+      jose: number;
+    };
+    inversores: {
+      total: number;
+      senjudo: number;
+      adalberto: number;
+    };
+    reinversion: number;
   };
 }

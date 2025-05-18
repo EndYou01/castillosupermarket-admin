@@ -18,6 +18,7 @@ const Stats = () => {
   const [distribution, setDistribution] = useState<IDistribution | null>(null);
   const [selectedRange, setSelectedRange] = useState<DateRange | undefined>();
   const [receiptsAmount, setReceiptsAmount] = useState<number>(0);
+  const [totalDays, setTotalDays] = useState<number>(1);
 
   const search = window.location.search;
   const params = new URLSearchParams(search);
@@ -36,6 +37,7 @@ const Stats = () => {
           setDistribution(data.distribucion);
 
           setReceiptsAmount(data.recibosProcesados);
+          setTotalDays(data.distribucion.diasProcesados);
         }
       } catch (error) {
         console.error("Error cargando ventas:", error);
@@ -66,6 +68,7 @@ const Stats = () => {
         });
         setDistribution(data.distribucion);
         setReceiptsAmount(data.recibosProcesados);
+        setTotalDays(data.distribucion.diasProcesados);
       }
     } catch (error) {
       console.error("Error cargando ventas:", error);
@@ -110,10 +113,14 @@ const Stats = () => {
               <p className="text-red-500">{error}</p>
             ) : (
               <div className="mx-auto max-w-7xl px-3 lg:px-8 mt-12">
-                <h2 className="text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl mt-14 mb-6 flex justify-between items-center">
-                  Recibos procesados
-                  <span className="sm:text-md font-thin">{receiptsAmount}</span>
-                </h2>
+                {totalDays > 1 && (
+                  <h2 className="text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl mt-14 mb-6 flex justify-between items-center">
+                    Recibos procesados
+                    <span className="sm:text-md font-thin">
+                      {receiptsAmount}
+                    </span>
+                  </h2>
+                )}
                 {/* ----------------------------- */}
 
                 <dl className="grid grid-cols-4 gap-8 lg:grid-cols-6 items-start justify-start">
@@ -138,6 +145,33 @@ const Stats = () => {
                     </dt>
                     <dd className="order-first text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl">
                       {formatCurrency(+formData.gananciaBruta)}
+                    </dd>
+                  </div>
+
+                  {totalDays > 1 ? (
+                    <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l-1 border-stone-50 pl-4">
+                      <dt className="text-base/7 text-amber-100">
+                        Promedio venta diaria
+                      </dt>
+                      <dd className="order-first text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl">
+                        {formatCurrency(+formData.ventaNeta / totalDays)}
+                      </dd>
+                    </div>
+                  ) : (
+                    <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l-1 border-stone-50 pl-4">
+                      <dt className="text-base/7 text-amber-100">Recibos</dt>
+                      <dd className="order-first text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl">
+                        {receiptsAmount}
+                      </dd>
+                    </div>
+                  )}
+
+                  <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l-1 border-stone-50 pl-4">
+                    <dt className="text-base/7 text-amber-100">Costos</dt>
+                    <dd className="order-first text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl">
+                      {formatCurrency(
+                        +formData.ventaNeta - +formData.gananciaBruta
+                      )}
                     </dd>
                   </div>
 

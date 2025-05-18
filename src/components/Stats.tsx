@@ -18,7 +18,6 @@ const Stats = () => {
   const [distribution, setDistribution] = useState<IDistribution | null>(null);
   const [selectedRange, setSelectedRange] = useState<DateRange | undefined>();
   const [receiptsAmount, setReceiptsAmount] = useState<number>(0);
-  const [totalDays, setTotalDays] = useState<number>(1);
 
   const search = window.location.search;
   const params = new URLSearchParams(search);
@@ -37,7 +36,6 @@ const Stats = () => {
           setDistribution(data.distribucion);
 
           setReceiptsAmount(data.recibosProcesados);
-          setTotalDays(data.distribucion.diasProcesados);
         }
       } catch (error) {
         console.error("Error cargando ventas:", error);
@@ -68,7 +66,6 @@ const Stats = () => {
         });
         setDistribution(data.distribucion);
         setReceiptsAmount(data.recibosProcesados);
-        setTotalDays(data.distribucion.diasProcesados);
       }
     } catch (error) {
       console.error("Error cargando ventas:", error);
@@ -144,30 +141,8 @@ const Stats = () => {
                     </dd>
                   </div>
 
-                  {totalDays > 1 ? (
-                    <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l-1 border-stone-50 pl-4">
-                      <dt className="text-base/7 text-amber-100">
-                        Promedio venta diaria
-                      </dt>
-                      <dd className="order-first text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl">
-                        {formatCurrency(+formData.ventaNeta / totalDays)}
-                      </dd>
-                    </div>
-                  ) : (
-                    <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l-1 border-stone-50 pl-4">
-                      <dt className="text-base/7 text-amber-100">
-                        Promedio ventas recibo
-                      </dt>
-                      <dd className="order-first text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl">
-                        {formatCurrency(+formData.ventaNeta / receiptsAmount)}
-                      </dd>
-                    </div>
-                  )}
-
                   <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l-1 border-stone-50 pl-4">
-                    <dt className="text-base/7 text-amber-100">
-                      Salarios
-                    </dt>
+                    <dt className="text-base/7 text-amber-100">Salarios</dt>
                     <dd className="order-first text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl">
                       {formatCurrency(distribution.pagoTrabajadores)}
                     </dd>
@@ -177,22 +152,22 @@ const Stats = () => {
                   </div>
 
                   <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l-1 border-stone-50 pl-4">
-                    <dt className="text-base/7 text-amber-100">
-                      Impuestos
-                    </dt>
+                    <dt className="text-base/7 text-amber-100">Impuestos</dt>
                     <dd className="order-first text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl">
                       {formatCurrency(distribution.pagoImpuestos)}
                     </dd>
                   </div>
 
-                  <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l-1 border-stone-50 pl-4">
-                    <dt className="text-base/7 text-amber-100">
-                      Gastos extra
-                    </dt>
-                    <dd className="order-first text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl">
-                      {formatCurrency(3150)}
-                    </dd>
-                  </div>
+                  {distribution.gastosExtras > 0 && (
+                    <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l-1 border-stone-50 pl-4">
+                      <dt className="text-base/7 text-amber-100">
+                        Gastos extra
+                      </dt>
+                      <dd className="order-first text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl">
+                        {formatCurrency(distribution.gastosExtras)}
+                      </dd>
+                    </div>
+                  )}
 
                   <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l-1 border-stone-50 pl-4">
                     <dt className="text-base/7 text-orange-400">

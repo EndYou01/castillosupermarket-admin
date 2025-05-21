@@ -158,7 +158,7 @@ const Stats = () => {
                     </dd>
                   </div>
 
-                  {distribution.gastosExtras > 0 && (
+                  {distribution && distribution.gastosExtras > 0 && (
                     <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l-1 border-stone-50 pl-4">
                       <dt className="text-base/7 text-amber-100">
                         Gastos extra

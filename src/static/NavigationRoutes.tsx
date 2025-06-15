@@ -5,7 +5,7 @@ import Inventory from "../container/inventory/Inventory";
 
 export const NavigationRoutes: INavigationRoute[] = [
     {
-      title: "Dashboard",
+      title: "Panel principal",
       url: "/dashboard",
       icon: SquareTerminal,
       items: [
@@ -19,7 +19,7 @@ export const NavigationRoutes: INavigationRoute[] = [
       index: true,
     },
     {
-      title: "Marketplace",
+      title: "Mercado",
       url: "/marketplace",
       icon: Store,
       items: [

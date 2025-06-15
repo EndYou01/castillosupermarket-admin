@@ -41,7 +41,7 @@ export function NavMain({
 
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>Platform</SidebarGroupLabel>
+      <SidebarGroupLabel>Secciones</SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item) => (
           <Collapsible
@@ -57,7 +57,7 @@ export function NavMain({
                   isCurrentPathActive={
                     !!actualPathUrl
                         ?.split("/")
-                        .find((e) => e === item.url.split("/")[1])
+                        .find((e) => e === item.url.split("/")[1]) 
                   }
                 >
                   {item.icon && <item.icon />}

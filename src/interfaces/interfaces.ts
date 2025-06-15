@@ -57,3 +57,19 @@ export interface INavigationRoute {
   items: INavigationItems[];
   index?: boolean;
 }
+
+export interface IInventarioResponse {
+  cantidadProductos: number;
+  cantidadTotalEnInventario: number;
+  productosConInventario: Array<{
+    cost: number;
+    description: string;
+    id: string;
+    inventory_found: boolean;
+    item_name: string;
+    quantity: number;
+    variant_id: string;
+  }>;
+  productosValidosCount: number;
+  totalInvertido: number;
+}

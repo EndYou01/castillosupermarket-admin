@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon';
-import { IVentasResponse } from '../interfaces/interfaces';
+import { IInventarioResponse, IVentasResponse } from '../interfaces/interfaces';
 
 export const getVentasDelDia = async (desdeStr?: string, hastaStr?: string) => {
   
@@ -33,6 +33,30 @@ export const getVentasDelDia = async (desdeStr?: string, hastaStr?: string) => {
     return data;
   } catch (error) {
     console.error("Error obteniendo ventas del día:", error);
+    return null;
+  }
+};
+
+export const getInventario = async () => {
+  const requestOptions = {
+    method: "GET",
+  };
+
+  try {
+    const response = await fetch(
+      'https://castillosupermarket-backend.vercel.app/productos/inventario',
+      requestOptions
+    );
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data: IInventarioResponse = await response.json();
+
+    return data;
+  } catch (error) {
+    console.error("Error obteniendo inventario:", error);
     return null;
   }
 };

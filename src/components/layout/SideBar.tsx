@@ -38,7 +38,7 @@ import {
         const current = route.items.find((item) => item.url === pathname);
         return (
           <>
-            <BreadcrumbSeparator className="hidden md:block" />
+            <BreadcrumbSeparator  />
             <BreadcrumbItem>
               <BreadcrumbPage>{current?.title ?? "Start"}</BreadcrumbPage>
             </BreadcrumbItem>
@@ -50,7 +50,7 @@ import {
         const setting = findSettingsItemByUrl(route, path);
         return (
           <React.Fragment key={path}>
-            <BreadcrumbSeparator className="hidden md:block" />
+            <BreadcrumbSeparator  />
             <BreadcrumbItem
               className="cursor-pointer opacity-60"
               onClick={() => navigate(setting?.url ?? "")}
@@ -75,9 +75,9 @@ import {
               />
               <Breadcrumb>
                 <BreadcrumbList>
-                  <BreadcrumbItem className="hidden md:block">
+                  <BreadcrumbItem >
                     <BreadcrumbLink href="#">
-                      {route?.title ?? "Dashboard"}
+                      {route?.title ?? "Panel principal"}
                     </BreadcrumbLink>
                   </BreadcrumbItem>
                   {breadcrumbItems()}

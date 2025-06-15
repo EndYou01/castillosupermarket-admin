@@ -1,3 +1,6 @@
+import { LucideProps } from "lucide-react";
+import { ReactElement } from "react";
+
 export interface IDistribution {
   gastosExtras: number;
   gananciaNeta: number;
@@ -32,4 +35,25 @@ export interface IVentasResponse {
   beneficioBruto: number;
   recibosProcesados: number;
   distribucion: IDistribution;
+}
+
+export interface INavigationItems {
+  title: string;
+  url: string;
+  element: ReactElement;
+  items?: INavigationItems[];
+  description?: string;
+  icon?: React.ForwardRefExoticComponent<
+    Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>
+  >;
+}
+export interface INavigationRoute {
+  title: string;
+  url: string;
+  icon: React.ForwardRefExoticComponent<
+    Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>
+  >;
+  isActive: boolean;
+  items: INavigationItems[];
+  index?: boolean;
 }

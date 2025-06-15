@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { FormData, IDistribution } from "../interfaces/interfaces";
-import { getVentasDelDia } from "../Api/castilloApi";
-import { DatePickerWithRange } from "./shadcn/DatePickerWithRange";
+import { FormData, IDistribution } from "../../interfaces/interfaces";
+import { getVentasDelDia } from "../../Api/castilloApi";
+import { DatePickerWithRange } from "../../components/shadcn/DatePickerWithRange";
 import { DateRange } from "react-day-picker";
-import { Button } from "./shadcn/Button";
-import LoadingSpin from "./LoadingSpin";
+import { Button } from "../../components/shadcn/Button";
+import LoadingSpin from "../../components/LoadingSpin";
 
 const Stats = () => {
   const [loading, setLoading] = useState(true);

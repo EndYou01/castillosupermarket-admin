@@ -1,7 +1,7 @@
-import castilloLogo from "../assets/castillo_logo.png";
+import castilloLogo from "../../assets/castillo_logo.png";
 import Stats from "./Stats";
 
-function App() {
+export default function Dashboard() {
   return (
     <div className="w-full h-full p-8">
       <div className="w-full mx-auto flex justify-center items-center">
@@ -18,5 +18,3 @@ function App() {
     </div>
   );
 }
-
-export default App;

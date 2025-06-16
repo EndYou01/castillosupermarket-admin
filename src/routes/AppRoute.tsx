@@ -4,7 +4,7 @@ import { NavigationRoutes } from "../static/NavigationRoutes";
 import { Suspense } from "react";
 import Sidebar from "../components/layout/SideBar";
 import Dashboard from "../container/dashboard/Dashboard";
-// import { FaztLoading } from "fazt-web-module";
+import LoadingSpin from "../components/LoadingSpin";
 // import PageNotFound from "../pages/PageNotFound";
 
 const AppRoute = () => {
@@ -20,8 +20,7 @@ const AppRoute = () => {
               key={key}
               path={route.url}
               element={
-                <Suspense fallback={<>loading</>}>{route.element}</Suspense>
-                // <Suspense fallback={<FaztLoading />}>{route.element}</Suspense>
+                <Suspense fallback={<LoadingSpin/>}>{route.element}</Suspense>
               }
             />
 
@@ -32,8 +31,7 @@ const AppRoute = () => {
                   key={key + key2}
                   path={itemRoute.url}
                   element={
-                    <Suspense fallback={<>loading</>}>
-                    {/* <Suspense fallback={<FaztLoading />}> */}
+                    <Suspense fallback={<LoadingSpin/>}>
                       {itemRoute.element}
                     </Suspense>
                   }

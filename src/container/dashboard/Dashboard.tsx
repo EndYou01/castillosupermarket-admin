@@ -3,7 +3,7 @@ import Stats from "./Stats";
 
 export default function Dashboard() {
   return (
-    <div className="w-full h-full p-8">
+    <div className="w-full h-full">
       <div className="w-full mx-auto flex justify-center items-center">
         <img
           src={castilloLogo}

@@ -16,8 +16,10 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
+  useSidebar
 } from "../shadcn/Sidebar";
 import { findRouteByUrl } from "../../functions/global";
+import { useIsMobile } from "../../hooks/use-mobile";
 // import { cn } from "../../utils/utils";
 
 export function NavMain({
@@ -35,9 +37,20 @@ export function NavMain({
   }[];
 }) {
   const { pathname } = useLocation();
+  const { setOpenMobile } = useSidebar(); // Hook para controlar el sidebar
+  const isMobile = useIsMobile()
+
   const actualPathUrl = findRouteByUrl(pathname)?.items?.find(
     (item) => item.url === pathname
   )?.url;
+
+  
+  // Función para manejar el click en subItems
+  const handleSubItemClick = () => {
+    if (isMobile) {
+      setOpenMobile(false); // Cerrar sidebar en móvil
+    }
+  };
 
   return (
     <SidebarGroup>
@@ -73,14 +86,8 @@ export function NavMain({
                       <SidebarMenuSubButton
                         asChild
                         isActive={actualPathUrl === subItem.url}
-                        // className={cn(
-                        //   actualPathUrl === subItem.url &&
-                        //     "bg-sidebar-accent hover:bg-sidebar-accent-hover hover:text-sidebar-accent-text-active text-sidebar-accent-text-active [&>svg]:text-sidebar-accent-text-active",
-                        //   !(actualPathUrl === subItem.url) &&
-                        //     "hover:bg-orange-500/20 "
-                        // )}
                       >
-                        <Link to={subItem.url}>
+                        <Link to={subItem.url} onClick={handleSubItemClick} >
                           <span>{subItem.title}</span>
                         </Link>
                       </SidebarMenuSubButton>

@@ -25,6 +25,7 @@ export interface FormData {
   gananciaBruta: string;
   fechaInicio?: string;
   fechaFin?: string;
+  metodos_pago: IMetodoPago[]
 }
 
 export interface IVentasResponse {
@@ -35,6 +36,13 @@ export interface IVentasResponse {
   beneficioBruto: number;
   recibosProcesados: number;
   distribucion: IDistribution;
+  metodos_pago: IMetodoPago[];
+}
+
+interface IMetodoPago {
+  name: string;
+  money_amount: number;
+  descuento: number;
 }
 
 export interface INavigationItems {

@@ -14,6 +14,7 @@ const Stats = () => {
     gananciaBruta: "",
     fechaInicio: "",
     fechaFin: "",
+    metodos_pago: [],
   });
   const [distribution, setDistribution] = useState<IDistribution | null>(null);
   const [selectedRange, setSelectedRange] = useState<DateRange | undefined>();
@@ -32,6 +33,7 @@ const Stats = () => {
             ...prev,
             ventaNeta: data.ventaNeta.toString(),
             gananciaBruta: data.beneficioBruto.toString(),
+            metodos_pago: data.metodos_pago,
           }));
           setDistribution(data.distribucion);
 
@@ -63,6 +65,7 @@ const Stats = () => {
           gananciaBruta: data.beneficioBruto.toString(),
           fechaInicio: desde,
           fechaFin: hasta,
+          metodos_pago: data.metodos_pago,
         });
         setDistribution(data.distribucion);
         setReceiptsAmount(data.recibosProcesados);
@@ -115,7 +118,6 @@ const Stats = () => {
                   <span className="sm:text-md font-thin">{receiptsAmount}</span>
                 </h2>
                 {/* ----------------------------- */}
-
                 <dl className="grid grid-cols-4 gap-8 lg:grid-cols-6 items-start justify-start">
                   <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l-1 border-stone-50 pl-4">
                     <dt className="text-base/7 text-amber-100">Venta neta</dt>
@@ -175,6 +177,50 @@ const Stats = () => {
                     </dt>
                     <dd className="order-first text-3xl font-semibold tracking-tight text-orange-400 sm:text-5xl">
                       {formatCurrency(distribution.gananciaNeta)}{" "}
+                    </dd>
+                  </div>
+                </dl>
+
+                {/* ----------------------------- */}
+                <h2 className="text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl mt-14 mb-6 flex justify-between items-center">
+                  Métodos de pago
+                </h2>
+                <dl className="grid grid-cols-4 gap-8  lg:grid-cols-4">
+                  {formData.metodos_pago.map((metodo) => (
+                    <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l-1 border-stone-50 pl-4">
+                      <dt className="text-base/7 text-amber-100">
+                        {metodo.name}
+                      </dt>
+                      <dd className="order-first text-3xl font-semibold tracking-tight text-amber-100 sm:text-5xl">
+                        {formatCurrency(metodo.money_amount)}
+                      </dd>
+                    </div>
+                  ))}
+
+                  <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l-1 border-stone-50 pl-4">
+                    <dt className="text-base/7 text-amber-100">
+                      Descuento fiscal
+                    </dt>
+                    <dd className="order-first text-3xl font-semibold tracking-tight text-amber-100 sm:text-5xl">
+                      {formatCurrency(
+                        formData.metodos_pago.find(
+                          (metodo) => metodo.name === "Tarjeta Fiscal"
+                        )?.descuento ?? 0
+                      )}{" "}
+                    </dd>
+                  </div>
+
+                  <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l-1 border-stone-50 pl-4">
+                    <dt className="text-base/7 text-orange-400">
+                      Total
+                    </dt>
+                    <dd className="order-first text-3xl font-semibold tracking-tight text-orange-400 sm:text-5xl">
+                      {formatCurrency(
+                        formData.metodos_pago.reduce(
+                                (sum, metodo) => sum + metodo.money_amount,
+                                0
+                              )
+                      )}{" "}
                     </dd>
                   </div>
                 </dl>

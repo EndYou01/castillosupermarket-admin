@@ -1,6 +1,8 @@
 import { DateTime } from 'luxon';
 import { IInventarioResponse, IVentasResponse } from '../interfaces/interfaces';
 
+const API_BASE_URL = import.meta.env.VITE_API_URL;
+
 export const getVentasDelDia = async (desdeStr?: string, hastaStr?: string) => {
   
   const now = DateTime.now().setZone("America/Havana");
@@ -20,7 +22,7 @@ export const getVentasDelDia = async (desdeStr?: string, hastaStr?: string) => {
 
   try {
     const response = await fetch(
-      `https://castillosupermarket-backend.vercel.app/ventas/rango?&desde=${desde}&hasta=${hasta}`,
+      `${API_BASE_URL}/ventas/rango?&desde=${desde}&hasta=${hasta}`,
       requestOptions
     );
 
@@ -44,7 +46,7 @@ export const getInventario = async () => {
 
   try {
     const response = await fetch(
-      'https://castillosupermarket-backend.vercel.app/productos/inventario',
+      `${API_BASE_URL}/productos/inventario`,
       requestOptions
     );
 

@@ -191,7 +191,7 @@ const Stats = () => {
                       <dt className="text-base/7 text-amber-100">
                         {metodo.name}
                       </dt>
-                      <dd className="order-first text-3xl font-semibold tracking-tight text-amber-100 sm:text-5xl">
+                      <dd className="order-first text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl">
                         {formatCurrency(metodo.money_amount)}
                       </dd>
                     </div>
@@ -201,7 +201,7 @@ const Stats = () => {
                     <dt className="text-base/7 text-amber-100">
                       Descuento fiscal
                     </dt>
-                    <dd className="order-first text-3xl font-semibold tracking-tight text-amber-100 sm:text-5xl">
+                    <dd className="order-first text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl">
                       {formatCurrency(
                         formData.metodos_pago.find(
                           (metodo) => metodo.name === "Tarjeta Fiscal"

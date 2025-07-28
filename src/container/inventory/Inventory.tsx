@@ -99,7 +99,7 @@ const Inventory = () => {
                                                         Cantidad de productos
                                                     </dt>
                                                     <dd className="order-first text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl">
-                                                        {data?.cantidadTotalEnInventario}
+                                                        {data?.cantidadTotalEnInventario.toFixed(2)}
                                                     </dd>
                                                 </div>
 

@@ -164,6 +164,9 @@ const Inventory = () => {
                                                                 <th className="text-right py-4 px-6 text-gray-300 font-medium ">
                                                                     Cantidad
                                                                 </th>
+                                                                <th className="text-right py-4 px-6 text-gray-300 font-medium ">
+                                                                    Invertido
+                                                                </th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
@@ -191,6 +194,11 @@ const Inventory = () => {
                                                                     <td className="py-4 px-6 text-right">
                                                                         <span className="text-white font-semibold">
                                                                             {product.quantity} u
+                                                                        </span>
+                                                                    </td>
+                                                                    <td className="py-4 px-6 text-right">
+                                                                        <span className="text-white font-semibold">
+                                                                            {product.quantity * product.cost}
                                                                         </span>
                                                                     </td>
                                                                 </tr>

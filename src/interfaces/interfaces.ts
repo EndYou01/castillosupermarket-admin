@@ -11,6 +11,7 @@ export interface IDistribution {
     total: number;
     alfonso: number;
     jose: number;
+    carlos: number;
   };
   inversores: {
     total: number;

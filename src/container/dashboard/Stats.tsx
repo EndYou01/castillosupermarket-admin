@@ -217,9 +217,9 @@ const Stats = () => {
                     <dd className="order-first text-3xl font-semibold tracking-tight text-orange-400 sm:text-5xl">
                       {formatCurrency(
                         formData.metodos_pago.reduce(
-                                (sum, metodo) => sum + metodo.money_amount,
-                                0
-                              )
+                          (sum, metodo) => sum + metodo.money_amount,
+                          0
+                        )
                       )}{" "}
                     </dd>
                   </div>
@@ -234,7 +234,7 @@ const Stats = () => {
                 <dl className="grid grid-cols-4 gap-8  lg:grid-cols-4">
                   <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l-1 border-stone-50 pl-4">
                     <dt className="text-base/7 text-amber-100">
-                      Jose <span className="font-thin">20%</span>
+                      Jose <span className="font-thin">12.5%</span>
                     </dt>
                     <dd className="order-first text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl">
                       {formatCurrency(distribution.administradores.jose)}
@@ -243,10 +243,19 @@ const Stats = () => {
 
                   <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l-1 border-stone-50 pl-4">
                     <dt className="text-base/7 text-amber-100">
-                      Alfonso <span className="font-thin">20%</span>
+                      Alfonso <span className="font-thin">12.5%</span>
                     </dt>
                     <dd className="order-first text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl">
                       {formatCurrency(distribution.administradores.alfonso)}
+                    </dd>
+                  </div>
+
+                  <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l-1 border-stone-50 pl-4">
+                    <dt className="text-base/7 text-amber-100">
+                      Carlos <span className="font-thin">15%</span>
+                    </dt>
+                    <dd className="order-first text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl">
+                      {formatCurrency(distribution.administradores.carlos)}
                     </dd>
                   </div>
 
@@ -257,7 +266,8 @@ const Stats = () => {
                     <dd className="order-first text-3xl font-semibold tracking-tight text-orange-400 sm:text-5xl">
                       {formatCurrency(
                         distribution.administradores.jose +
-                          distribution.administradores.alfonso
+                        distribution.administradores.alfonso +
+                        distribution.administradores.carlos
                       )}
                     </dd>
                   </div>
@@ -288,8 +298,8 @@ const Stats = () => {
                     <dd className="order-first text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl">
                       {showAllInvestors
                         ? formatCurrency(
-                            (79.07 / 100) * distribution.inversores.senjudo
-                          )
+                          (79.07 / 100) * distribution.inversores.senjudo
+                        )
                         : formatCurrency(distribution.inversores.senjudo)}
                     </dd>
                   </div>
@@ -326,7 +336,7 @@ const Stats = () => {
                     <dd className="order-first text-3xl font-semibold tracking-tight text-orange-400 sm:text-5xl">
                       {formatCurrency(
                         distribution.inversores.adalberto +
-                          distribution.inversores.senjudo
+                        distribution.inversores.senjudo
                       )}
                     </dd>
                   </div>

@@ -229,12 +229,12 @@ const Stats = () => {
 
                 <h2 className="text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl mt-14 mb-6 flex justify-between items-center">
                   Administradores{" "}
-                  <span className="sm:text-md font-thin">43%</span>
+                  <span className="sm:text-md font-thin">45%</span>
                 </h2>
                 <dl className="grid grid-cols-4 gap-8  lg:grid-cols-4">
                   <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l-1 border-stone-50 pl-4">
                     <dt className="text-base/7 text-amber-100">
-                      Jose <span className="font-thin">14%</span>
+                      Jose <span className="font-thin">15%</span>
                     </dt>
                     <dd className="order-first text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl">
                       {formatCurrency(distribution.administradores.jose)}
@@ -243,7 +243,7 @@ const Stats = () => {
 
                   <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l-1 border-stone-50 pl-4">
                     <dt className="text-base/7 text-amber-100">
-                      Alfonso <span className="font-thin">14%</span>
+                      Alfonso <span className="font-thin">15%</span>
                     </dt>
                     <dd className="order-first text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl">
                       {formatCurrency(distribution.administradores.alfonso)}
@@ -276,12 +276,12 @@ const Stats = () => {
                 {/* ----------------------------- */}
 
                 <h2 className="text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl mt-14 mb-6 flex justify-between items-center">
-                  Inversores <span className="sm:text-md font-thin">52%</span>
+                  Inversores <span className="sm:text-md font-thin">50%</span>
                 </h2>
                 <dl className="grid grid-cols-4 gap-8  lg:grid-cols-4">
                   <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l-1 border-stone-50 pl-4">
                     <dt className="text-base/7 text-amber-100">
-                      Alber <span className="font-thin">26.6%</span>
+                      Alber <span className="font-thin">25.6%</span>
                     </dt>
                     <dd className="order-first text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl">
                       {formatCurrency(distribution.inversores.adalberto)}
@@ -292,7 +292,7 @@ const Stats = () => {
                     <dt className="text-base/7 text-amber-100">
                       Senjudo{" "}
                       <span className="font-thin">
-                        {showAllInvestors ? "21.26%" : "25.2%"}
+                        {showAllInvestors ? "21.26%" : "24.2%"}
                       </span>
                     </dt>
                     <dd className="order-first text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl">

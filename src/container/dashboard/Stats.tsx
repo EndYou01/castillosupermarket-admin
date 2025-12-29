@@ -234,7 +234,7 @@ const Stats = () => {
                 <dl className="grid grid-cols-4 gap-8  lg:grid-cols-4">
                   <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l-1 border-stone-50 pl-4">
                     <dt className="text-base/7 text-amber-100">
-                      Jose <span className="font-thin">14.0%</span>
+                      Jose <span className="font-thin">14%</span>
                     </dt>
                     <dd className="order-first text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl">
                       {formatCurrency(distribution.administradores.jose)}
@@ -243,7 +243,7 @@ const Stats = () => {
 
                   <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l-1 border-stone-50 pl-4">
                     <dt className="text-base/7 text-amber-100">
-                      Alfonso <span className="font-thin">14.0%</span>
+                      Alfonso <span className="font-thin">14%</span>
                     </dt>
                     <dd className="order-first text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl">
                       {formatCurrency(distribution.administradores.alfonso)}
@@ -281,7 +281,7 @@ const Stats = () => {
                 <dl className="grid grid-cols-4 gap-8  lg:grid-cols-4">
                   <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l-1 border-stone-50 pl-4">
                     <dt className="text-base/7 text-amber-100">
-                      Alber <span className="font-thin">26.60%</span>
+                      Alber <span className="font-thin">26.6%</span>
                     </dt>
                     <dd className="order-first text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl">
                       {formatCurrency(distribution.inversores.adalberto)}
@@ -292,7 +292,7 @@ const Stats = () => {
                     <dt className="text-base/7 text-amber-100">
                       Senjudo{" "}
                       <span className="font-thin">
-                        {showAllInvestors ? "21.26%" : "25.20%"}
+                        {showAllInvestors ? "21.26%" : "25.2%"}
                       </span>
                     </dt>
                     <dd className="order-first text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl">

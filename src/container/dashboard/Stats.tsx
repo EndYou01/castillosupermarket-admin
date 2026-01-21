@@ -20,9 +20,6 @@ const Stats = () => {
   const [selectedRange, setSelectedRange] = useState<DateRange | undefined>();
   const [receiptsAmount, setReceiptsAmount] = useState<number>(0);
 
-  const search = window.location.search;
-  const params = new URLSearchParams(search);
-  const showAllInvestors = params.get("showAllInvestors");
 
   useEffect(() => {
     const loadVentas = async () => {

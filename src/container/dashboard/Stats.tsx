@@ -229,12 +229,12 @@ const Stats = () => {
 
                 <h2 className="text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl mt-14 mb-6 flex justify-between items-center">
                   Administradores{" "}
-                  <span className="sm:text-md font-thin">40%</span>
+                  <span className="sm:text-md font-thin">51.1%</span>
                 </h2>
                 <dl className="grid grid-cols-4 gap-8  lg:grid-cols-4">
                   <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l-1 border-stone-50 pl-4">
                     <dt className="text-base/7 text-amber-100">
-                      Jose <span className="font-thin">12.5%</span>
+                      Jose <span className="font-thin">18.05%</span>
                     </dt>
                     <dd className="order-first text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl">
                       {formatCurrency(distribution.administradores.jose)}
@@ -243,7 +243,7 @@ const Stats = () => {
 
                   <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l-1 border-stone-50 pl-4">
                     <dt className="text-base/7 text-amber-100">
-                      Alfonso <span className="font-thin">12.5%</span>
+                      Alfonso <span className="font-thin">18.05%</span>
                     </dt>
                     <dd className="order-first text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl">
                       {formatCurrency(distribution.administradores.alfonso)}
@@ -276,7 +276,7 @@ const Stats = () => {
                 {/* ----------------------------- */}
 
                 <h2 className="text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl mt-14 mb-6 flex justify-between items-center">
-                  Inversores <span className="sm:text-md font-thin">55%</span>
+                  Inversores <span className="sm:text-md font-thin">43.66%</span>
                 </h2>
                 <dl className="grid grid-cols-4 gap-8  lg:grid-cols-4">
                   <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l-1 border-stone-50 pl-4">
@@ -291,44 +291,13 @@ const Stats = () => {
                   <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l-1 border-stone-50 pl-4">
                     <dt className="text-base/7 text-amber-100">
                       Senjudo{" "}
-                      <span className="font-thin">
-                        {showAllInvestors ? "21.26%" : "26.88%"}
-                      </span>
+                      <span className="font-thin">18.05%</span>
                     </dt>
                     <dd className="order-first text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl">
-                      {showAllInvestors
-                        ? formatCurrency(
-                          (79.07 / 100) * distribution.inversores.senjudo
-                        )
-                        : formatCurrency(distribution.inversores.senjudo)}
+                      {formatCurrency(distribution.inversores.senjudo)}
                     </dd>
                   </div>
-
-                  {showAllInvestors && (
-                    <>
-                      <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l-1 border-stone-50 pl-4">
-                        <dt className="text-base/7 text-amber-100">
-                          Rosa <span className="font-thin">2.81%</span>
-                        </dt>
-                        <dd className="order-first text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl">
-                          {formatCurrency(
-                            (10.4 / 100) * distribution.inversores.senjudo
-                          )}
-                        </dd>
-                      </div>
-
-                      <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l-1 border-stone-50 pl-4">
-                        <dt className="text-base/7 text-amber-100">
-                          Alesso <span className="font-thin">2.81%%</span>
-                        </dt>
-                        <dd className="order-first text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl">
-                          {formatCurrency(
-                            (10.4 / 100) * distribution.inversores.senjudo
-                          )}
-                        </dd>
-                      </div>
-                    </>
-                  )}
+            
                   <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l-1 border-stone-50 pl-4">
                     <dt className="text-base/7 text-orange-400">
                       Total inversores

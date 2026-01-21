@@ -281,7 +281,7 @@ const Stats = () => {
                 <dl className="grid grid-cols-4 gap-8  lg:grid-cols-4">
                   <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l-1 border-stone-50 pl-4">
                     <dt className="text-base/7 text-amber-100">
-                      Alber <span className="font-thin">28.11%</span>
+                      Alber <span className="font-thin">25.6%</span>
                     </dt>
                     <dd className="order-first text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl">
                       {formatCurrency(distribution.inversores.adalberto)}

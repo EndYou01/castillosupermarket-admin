@@ -37,12 +37,12 @@ const Login = () => {
       </div>
 
       <div className="w-full max-w-7xl px-3 lg:px-8">
-        <h2 className="text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl mb-6">
+        <h2 className="text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl mb-6 text-center">
           Iniciar sesión
         </h2>
 
         <form onSubmit={handleSubmit}>
-          <dl className="grid grid-cols-4 gap-8 lg:grid-cols-6 items-start">
+          <dl className="flex flex-col gap-8 w-full max-w-md mx-auto">
             <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l-1 border-stone-50 pl-4">
               <dt className="text-base/7 text-amber-100">Usuario</dt>
               <dd className="order-first">
@@ -82,7 +82,7 @@ const Login = () => {
           </dl>
 
           {error && (
-            <p className="mt-6 text-base/7 text-red-400 border-l-1 border-red-400 pl-4">
+            <p className="mt-6 text-base/7 text-red-400 border-l-1 border-red-400 pl-4 ">
               {error}
             </p>
           )}

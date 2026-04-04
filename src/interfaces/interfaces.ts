@@ -7,18 +7,14 @@ export interface IDistribution {
   diasProcesados: number;
   pagoTrabajadores: number;
   pagoImpuestos: number;
-  administradores: {
+  reinversion: number;
+  jefes: {
     total: number;
     alfonso: number;
-    jose: number;
-    carlos: number;
-  };
-  inversores: {
-    total: number;
     senjudo: number;
-    adalberto: number;
+    josse: number;
+    julio: number;
   };
-  reinversion: number;
 }
 
 export interface FormData {

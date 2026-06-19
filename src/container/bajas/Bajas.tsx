@@ -3,6 +3,7 @@ import { DateTime } from "luxon";
 import { getBajas } from "../../Api/castilloApi";
 import { IBajasResponse } from "../../interfaces/interfaces";
 import LoadingSpin from "../../components/LoadingSpin";
+import { MonthPicker } from "../../components/shadcn/MonthPicker";
 
 const formatCurrency = (amount: number) =>
   new Intl.NumberFormat("es-MX", {
@@ -38,13 +39,7 @@ const Bajas = () => {
           <h2 className="text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl">
             Movimientos de bajas
           </h2>
-          <input
-            type="month"
-            value={mes}
-            max={mesActual}
-            onChange={(e) => setMes(e.target.value)}
-            className="rounded bg-white/10 border border-white/20 px-4 py-2 text-amber-50 focus:outline-none focus:ring-2 focus:ring-amber-500 w-fit"
-          />
+          <MonthPicker value={mes} max={mesActual} onChange={setMes} />
         </div>
 
         {loading ? (

@@ -3,6 +3,7 @@ import {
   IBajasResponse,
   ICapitalResponse,
   IDarBajaPayload,
+  IDarEntradaPayload,
   IInventarioResponse,
   IVentasResponse,
 } from '../interfaces/interfaces';
@@ -94,6 +95,27 @@ export const registrarCierre = async (
     return { ok: true };
   } catch (error) {
     console.error("Error registrando cierre:", error);
+    return { ok: false, error: "No se pudo conectar con el servidor" };
+  }
+};
+
+// Da entrada a un producto (suma stock, edita costo/precio, resta del capital).
+export const darEntrada = async (
+  payload: IDarEntradaPayload
+): Promise<{ ok: boolean; error?: string }> => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/capital/entrada`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    if (!response.ok) {
+      const body = await response.json().catch(() => ({}));
+      return { ok: false, error: body?.message || `Error ${response.status}` };
+    }
+    return { ok: true };
+  } catch (error) {
+    console.error("Error dando entrada:", error);
     return { ok: false, error: "No se pudo conectar con el servidor" };
   }
 };

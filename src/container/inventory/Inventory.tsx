@@ -12,6 +12,7 @@ import {
 } from "../../components/shadcn/Select";
 import { Button } from "../../components/shadcn/Button";
 import DarBajaModal from "./DarBajaModal";
+import DarEntradaModal from "./DarEntradaModal";
 
 const Inventory = () => {
     const [loading, setLoading] = useState(true);
@@ -19,6 +20,7 @@ const Inventory = () => {
     const [data, setData] = useState<IInventarioResponse | null>(null);
     const [sortBy, setSortBy] = useState<string>('alphabetical');
     const [showBaja, setShowBaja] = useState(false);
+    const [showEntrada, setShowEntrada] = useState(false);
 
     const loadInventory = async () => {
         try {
@@ -79,12 +81,20 @@ const Inventory = () => {
                     <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold tracking-tight text-amber-50">
                         Inventario general
                     </h2>
-                    <Button
-                        onClick={() => setShowBaja(true)}
-                        className="bg-orange-500/90 text-white hover:bg-orange-600 w-fit"
-                    >
-                        Dar baja
-                    </Button>
+                    <div className="flex gap-2 w-fit">
+                        <Button
+                            onClick={() => setShowEntrada(true)}
+                            className="bg-emerald-500/90 text-white hover:bg-emerald-600 w-fit"
+                        >
+                            Dar entrada
+                        </Button>
+                        <Button
+                            onClick={() => setShowBaja(true)}
+                            className="bg-orange-500/90 text-white hover:bg-orange-600 w-fit"
+                        >
+                            Dar baja
+                        </Button>
+                    </div>
                 </div>
 
                 {loading ? (
@@ -284,6 +294,17 @@ const Inventory = () => {
                     onClose={() => setShowBaja(false)}
                     onDone={() => {
                         setShowBaja(false);
+                        loadInventory();
+                    }}
+                />
+            )}
+
+            {showEntrada && (
+                <DarEntradaModal
+                    productos={data?.productosConInventario ?? []}
+                    onClose={() => setShowEntrada(false)}
+                    onDone={() => {
+                        setShowEntrada(false);
                         loadInventory();
                     }}
                 />

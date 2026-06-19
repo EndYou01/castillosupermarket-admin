@@ -115,11 +115,21 @@ export interface IDarBajaPayload {
   motivo: string;
 }
 
+export interface IDarEntradaPayload {
+  variantId: string;
+  itemId: string;
+  itemName: string;
+  cantidad: number;
+  nuevoCosto: number;
+  nuevoPrecio: number;
+}
+
 export interface IInventarioResponse {
   cantidadProductos: number;
   cantidadTotalEnInventario: number;
   productosConInventario: Array<{
     cost: number;
+    price: number;
     description: string;
     id: string;
     inventory_found: boolean;

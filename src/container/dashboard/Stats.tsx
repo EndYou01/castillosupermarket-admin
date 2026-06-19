@@ -227,13 +227,31 @@ const Stats = () => {
                 <h2 className="text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl mt-14 mb-6 flex justify-between items-center">
                   Reinversión
                 </h2>
-                <dl className="grid grid-cols-4 gap-8 lg:grid-cols-4">
+                <dl className="grid grid-cols-4 gap-8 lg:grid-cols-6">
                   <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l-1 border-stone-50 pl-4">
                     <dt className="text-base/7 text-orange-400">
                       Total reinversión
                     </dt>
                     <dd className="order-first text-3xl font-semibold tracking-tight text-orange-400 sm:text-5xl">
                       {formatCurrency(distribution.reinversion)}
+                    </dd>
+                  </div>
+
+                  <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l-1 border-stone-50 pl-4">
+                    <dt className="text-base/7 text-amber-100">
+                      Estímulo trabajadores
+                    </dt>
+                    <dd className="order-first text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl">
+                      {formatCurrency(distribution.estimulo)}
+                    </dd>
+                  </div>
+
+                  <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l-1 border-stone-50 pl-4">
+                    <dt className="text-base/7 text-amber-100">
+                      Limpieza (Mary)
+                    </dt>
+                    <dd className="order-first text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl">
+                      {formatCurrency(distribution.limpieza)}
                     </dd>
                   </div>
                 </dl>

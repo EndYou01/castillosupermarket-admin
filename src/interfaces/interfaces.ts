@@ -8,6 +8,8 @@ export interface IDistribution {
   pagoTrabajadores: number;
   pagoImpuestos: number;
   reinversion: number;
+  estimulo: number;
+  limpieza: number;
   jefes: {
     total: number;
     alfonso: number;
@@ -31,6 +33,7 @@ export interface IVentasResponse {
   ventaNeta: number;
   costoTotal: number;
   beneficioBruto: number;
+  descuentoFiscal: number;
   recibosProcesados: number;
   distribucion: IDistribution;
   metodos_pago: IMetodoPago[];

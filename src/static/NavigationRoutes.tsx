@@ -5,37 +5,37 @@ import Inventory from "../container/inventory/Inventory";
 import Capital from "../container/capital/Capital";
 
 export const NavigationRoutes: INavigationRoute[] = [
-    {
-      title: "Panel principal",
-      url: "/dashboard",
-      icon: SquareTerminal,
-      items: [
-        {
-          title: "Inicio",
-          url: "/dashboard/start",
-          element: <Dashboard />,
-        },
-        {
-          title: "Capital",
-          url: "/dashboard/capital",
-          element: <Capital />,
-        },
-      ],
-      isActive: true,
-      index: true,
-    },
-    {
-      title: "Mercado",
-      url: "/marketplace",
-      icon: Store,
-      items: [
-        {
-          title: "Inventario",
-          url: "/marketplace/inventory",
-          element: <Inventory/>,
-        },
-      ],
-      isActive: false,
-    },
-  ];
-  
+  {
+    title: "Panel principal",
+    url: "/dashboard",
+    icon: SquareTerminal,
+    items: [
+      {
+        title: "Inicio",
+        url: "/dashboard/start",
+        element: <Dashboard />,
+      },
+
+    ],
+    isActive: true,
+    index: true,
+  },
+  {
+    title: "Mercado",
+    url: "/marketplace",
+    icon: Store,
+    items: [
+      {
+        title: "Inventario",
+        url: "/marketplace/inventory",
+        element: <Inventory />,
+      },
+      {
+        title: "Capital",
+        url: "/dashboard/capital",
+        element: <Capital />,
+      },
+    ],
+    isActive: false,
+  },
+];

@@ -115,6 +115,26 @@ export interface IDarBajaPayload {
   motivo: string;
 }
 
+export interface IPatrimonio {
+  capital: number;
+  inventario: number;
+  totalCup: number;
+  tasaUsd: number | null;
+  tasaEsRespaldo: boolean;
+  totalUsd: number | null;
+  fecha: string;
+}
+
+export interface IPatrimonioSnapshot {
+  id: number;
+  capital: number;
+  inventario: number;
+  totalCup: number;
+  tasaUsd: number | null;
+  totalUsd: number | null;
+  fecha: string;
+}
+
 export interface IDarEntradaPayload {
   variantId: string;
   itemId: string;

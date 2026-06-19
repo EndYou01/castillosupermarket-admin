@@ -37,22 +37,32 @@ const DialogContent = React.forwardRef<
       ref={ref}
       style={{ backgroundColor: "#063521" }}
       className={cn(
-        "fixed left-1/2 top-1/2 z-50 grid w-full max-w-lg -translate-x-1/2 -translate-y-1/2 gap-4",
-        "max-h-[90vh] overflow-y-auto rounded-2xl border border-amber-100/10",
-        "p-6 shadow-2xl shadow-black/50",
-        "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 duration-200",
+        "fixed z-50 grid gap-4 overflow-y-auto border border-amber-100/10 shadow-2xl shadow-black/50 duration-200",
+        // mobile: bottom sheet
+        "inset-x-0 bottom-0 max-h-[92vh] w-full rounded-t-2xl px-4 pb-[max(1.25rem,env(safe-area-inset-bottom))] pt-4",
+        // desktop: centered modal
+        "sm:inset-x-auto sm:bottom-auto sm:left-1/2 sm:top-1/2 sm:max-h-[90vh] sm:w-full sm:max-w-lg sm:-translate-x-1/2 sm:-translate-y-1/2 sm:rounded-2xl sm:p-6",
+        // animations
+        "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+        "max-sm:data-[state=closed]:slide-out-to-bottom max-sm:data-[state=open]:slide-in-from-bottom",
+        "sm:data-[state=closed]:zoom-out-95 sm:data-[state=open]:zoom-in-95",
         className
       )}
       {...props}
     >
-      {/* heraldic top accent */}
+      {/* heraldic top accent (desktop) */}
       <span
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-orange-400/70 to-transparent"
+        className="pointer-events-none absolute inset-x-0 top-0 hidden h-px bg-gradient-to-r from-transparent via-orange-400/70 to-transparent sm:block"
+      />
+      {/* drag handle (mobile bottom-sheet affordance) */}
+      <div
+        aria-hidden
+        className="mx-auto -mt-1 mb-1 h-1.5 w-12 shrink-0 rounded-full bg-white/25 sm:hidden"
       />
       {children}
       {showClose && (
-        <DialogPrimitive.Close className="absolute right-5 top-5 rounded-md p-1 text-amber-100/50 transition-colors hover:bg-white/10 hover:text-amber-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/70">
+        <DialogPrimitive.Close className="absolute right-4 top-4 grid size-9 place-items-center rounded-lg text-amber-100/60 transition-colors hover:bg-white/10 hover:text-amber-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/70 sm:right-5 sm:top-5 sm:size-8 sm:rounded-md">
           <X className="size-5" />
           <span className="sr-only">Cerrar</span>
         </DialogPrimitive.Close>

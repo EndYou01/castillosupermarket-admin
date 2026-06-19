@@ -129,7 +129,7 @@ const DarEntradaModal = ({ productos, onClose, onDone }: Props) => {
               />
             </div>
 
-            <div className="max-h-72 overflow-y-auto rounded-xl border border-amber-100/10 bg-black/15">
+            <div className="max-h-[42vh] overflow-y-auto rounded-xl border border-amber-100/10 bg-black/15 sm:max-h-72">
               {filtrados.length === 0 ? (
                 <p className="p-6 text-center text-sm text-amber-100/40">
                   Sin resultados.
@@ -233,7 +233,7 @@ const DarEntradaModal = ({ productos, onClose, onDone }: Props) => {
           <Button
             variant="ghost"
             onClick={onClose}
-            className="text-amber-100/80 hover:bg-white/10 hover:text-amber-50"
+            className="h-11 w-full text-amber-100/80 hover:bg-white/10 hover:text-amber-50 sm:h-9 sm:w-auto"
           >
             Cancelar
           </Button>
@@ -241,7 +241,7 @@ const DarEntradaModal = ({ productos, onClose, onDone }: Props) => {
             <Button
               onClick={submit}
               disabled={submitting}
-              className="bg-emerald-500 text-white shadow-lg shadow-emerald-900/30 hover:bg-emerald-600"
+              className="h-11 w-full bg-emerald-500 text-white shadow-lg shadow-emerald-900/30 hover:bg-emerald-600 sm:h-9 sm:w-auto"
             >
               {submitting ? "Procesando..." : "Confirmar entrada"}
             </Button>

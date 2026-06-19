@@ -5,6 +5,8 @@ import {
   IDarBajaPayload,
   IDarEntradaPayload,
   IInventarioResponse,
+  IPatrimonio,
+  IPatrimonioSnapshot,
   IVentasResponse,
 } from '../interfaces/interfaces';
 
@@ -95,6 +97,55 @@ export const registrarCierre = async (
     return { ok: true };
   } catch (error) {
     console.error("Error registrando cierre:", error);
+    return { ok: false, error: "No se pudo conectar con el servidor" };
+  }
+};
+
+// ----------------------- Patrimonio -----------------------
+
+export const getPatrimonio = async (): Promise<IPatrimonio | null> => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/patrimonio`, { method: "GET" });
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    return await response.json();
+  } catch (error) {
+    console.error("Error obteniendo patrimonio:", error);
+    return null;
+  }
+};
+
+export const getPatrimonioHistorial = async (
+  limit = 60
+): Promise<IPatrimonioSnapshot[]> => {
+  try {
+    const response = await fetch(
+      `${API_BASE_URL}/patrimonio/historial?limit=${limit}`,
+      { method: "GET" }
+    );
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    return await response.json();
+  } catch (error) {
+    console.error("Error obteniendo historial de patrimonio:", error);
+    return [];
+  }
+};
+
+export const guardarSnapshotPatrimonio = async (): Promise<{
+  ok: boolean;
+  error?: string;
+}> => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/patrimonio/snapshot`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+    });
+    if (!response.ok) {
+      const body = await response.json().catch(() => ({}));
+      return { ok: false, error: body?.message || `Error ${response.status}` };
+    }
+    return { ok: true };
+  } catch (error) {
+    console.error("Error guardando snapshot:", error);
     return { ok: false, error: "No se pudo conectar con el servidor" };
   }
 };

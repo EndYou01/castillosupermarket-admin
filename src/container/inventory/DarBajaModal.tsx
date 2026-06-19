@@ -103,15 +103,18 @@ const DarBajaModal = ({ productos, onClose, onDone }: Props) => {
 
   return (
     <Dialog open onOpenChange={(open) => !open && onClose()}>
-      <DialogContent>
+      <DialogContent
+        style={{ backgroundColor: "#f97316" }}
+        className="border-orange-200/25"
+      >
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2.5">
-            <span className="grid size-9 place-items-center rounded-lg bg-orange-500/15 text-orange-300 ring-1 ring-orange-400/20">
+            <span className="grid size-9 place-items-center rounded-lg bg-white/15 text-white ring-1 ring-white/25">
               <PackageMinus className="size-5" />
             </span>
             Dar baja
           </DialogTitle>
-          <DialogDescription>
+          <DialogDescription className="text-white/70">
             {selected
               ? "Confirma la cantidad y el motivo de la baja."
               : "Busca y selecciona el producto a dar de baja."}
@@ -131,7 +134,7 @@ const DarBajaModal = ({ productos, onClose, onDone }: Props) => {
               />
             </div>
 
-            <div className="max-h-72 overflow-y-auto rounded-xl border border-amber-100/10 bg-black/15">
+            <div className="max-h-[42vh] overflow-y-auto rounded-xl border border-amber-100/10 bg-black/15 sm:max-h-72">
               {filtrados.length === 0 ? (
                 <p className="p-6 text-center text-sm text-amber-100/40">
                   Sin resultados.
@@ -250,7 +253,7 @@ const DarBajaModal = ({ productos, onClose, onDone }: Props) => {
           <Button
             variant="ghost"
             onClick={onClose}
-            className="text-amber-100/80 hover:bg-white/10 hover:text-amber-50"
+            className="h-11 w-full text-amber-100/80 hover:bg-white/10 hover:text-amber-50 sm:h-9 sm:w-auto"
           >
             Cancelar
           </Button>
@@ -258,7 +261,7 @@ const DarBajaModal = ({ productos, onClose, onDone }: Props) => {
             <Button
               onClick={submit}
               disabled={submitting}
-              className="bg-orange-500 text-white shadow-lg shadow-orange-900/30 hover:bg-orange-600"
+              className="h-11 w-full bg-white font-semibold text-orange-700 shadow-lg shadow-orange-900/30 hover:bg-orange-50 sm:h-9 sm:w-auto"
             >
               {submitting ? "Procesando..." : "Confirmar baja"}
             </Button>

@@ -82,6 +82,29 @@ export interface ICapitalResponse {
   movimientos: IMovimientoCapital[];
 }
 
+export interface IBaja {
+  id: number;
+  variantId: string;
+  itemId: string | null;
+  itemName: string;
+  cantidad: number;
+  costoUnitario: number;
+  stockAntes: number | null;
+  stockDespues: number | null;
+  partePagada: number;
+  motivo: string;
+  fecha: string;
+}
+
+export interface IBajasResponse {
+  mes: string;
+  totalCosto: number;
+  totalPartePagada: number;
+  totalNeto: number;
+  cantidadBajas: number;
+  bajas: IBaja[];
+}
+
 export interface IDarBajaPayload {
   variantId: string;
   itemId?: string;

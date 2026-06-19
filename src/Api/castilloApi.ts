@@ -1,5 +1,6 @@
 import { DateTime } from 'luxon';
 import {
+  IBajasResponse,
   ICapitalResponse,
   IDarBajaPayload,
   IInventarioResponse,
@@ -94,6 +95,23 @@ export const registrarCierre = async (
   } catch (error) {
     console.error("Error registrando cierre:", error);
     return { ok: false, error: "No se pudo conectar con el servidor" };
+  }
+};
+
+// Lista de bajas de un mes (mes en formato YYYY-MM) + total al costo.
+export const getBajas = async (
+  mes?: string
+): Promise<IBajasResponse | null> => {
+  try {
+    const q = mes ? `?mes=${mes}` : "";
+    const response = await fetch(`${API_BASE_URL}/capital/bajas${q}`, {
+      method: "GET",
+    });
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    return await response.json();
+  } catch (error) {
+    console.error("Error obteniendo bajas:", error);
+    return null;
   }
 };
 

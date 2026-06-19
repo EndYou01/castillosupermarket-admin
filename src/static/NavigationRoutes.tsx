@@ -3,6 +3,7 @@ import { INavigationRoute } from "../interfaces/interfaces";
 import Dashboard from "../container/dashboard/Dashboard";
 import Inventory from "../container/inventory/Inventory";
 import Capital from "../container/capital/Capital";
+import Bajas from "../container/bajas/Bajas";
 
 export const NavigationRoutes: INavigationRoute[] = [
   {
@@ -29,6 +30,11 @@ export const NavigationRoutes: INavigationRoute[] = [
         title: "Inventario",
         url: "/marketplace/inventory",
         element: <Inventory />,
+      },
+      {
+        title: "Bajas",
+        url: "/marketplace/bajas",
+        element: <Bajas />,
       },
       {
         title: "Capital",

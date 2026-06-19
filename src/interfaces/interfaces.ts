@@ -135,6 +135,13 @@ export interface IPatrimonioSnapshot {
   fecha: string;
 }
 
+export interface IInflacion {
+  tasaHoy: number | null;
+  cambioPctDia: number;
+  cambioPctVentana: number;
+  diasVentana: number;
+}
+
 export interface IDarEntradaPayload {
   variantId: string;
   itemId: string;

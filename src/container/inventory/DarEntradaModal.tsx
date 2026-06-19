@@ -1,6 +1,7 @@
-import { useMemo, useState } from "react";
-import { ArrowLeft, PackagePlus, Search } from "lucide-react";
-import { darEntrada } from "../../Api/castilloApi";
+import { useEffect, useMemo, useState } from "react";
+import { ArrowLeft, PackagePlus, Search, Sparkles } from "lucide-react";
+import { darEntrada, getInflacion } from "../../Api/castilloApi";
+import { IInflacion } from "../../interfaces/interfaces";
 import { Button } from "../../components/shadcn/Button";
 import {
   Dialog,
@@ -39,6 +40,11 @@ const DarEntradaModal = ({ productos, onClose, onDone }: Props) => {
   const [precio, setPrecio] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [inflacion, setInflacion] = useState<IInflacion | null>(null);
+
+  useEffect(() => {
+    getInflacion().then(setInflacion);
+  }, []);
 
   const filtrados = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -98,6 +104,28 @@ const DarEntradaModal = ({ productos, onClose, onDone }: Props) => {
   };
 
   const costoTotal = Number(costo) * Number(cantidad || 0);
+
+  // Recomendación de precio: mantiene tu margen actual sobre el costo nuevo y le
+  // suma un colchón por la subida del dólar durante ~7 días de rotación.
+  const HOLDING_DAYS = 7;
+  const sugerencia = useMemo(() => {
+    if (!selected || !inflacion || selected.cost <= 0) return null;
+    const costoNum = Number(costo);
+    if (!Number.isFinite(costoNum) || costoNum <= 0) return null;
+
+    const markup = selected.price / selected.cost; // margen actual (ratio)
+    const colchon = Math.pow(1 + inflacion.cambioPctDia, HOLDING_DAYS) - 1;
+    const precioSugerido =
+      Math.round((costoNum * markup * (1 + colchon)) / 5) * 5;
+
+    return {
+      precioSugerido,
+      colchonPct: colchon * 100,
+      costoReposicion: Math.round(
+        selected.cost * (1 + inflacion.cambioPctVentana)
+      ),
+    };
+  }, [selected, inflacion, costo]);
 
   return (
     <Dialog open onOpenChange={(open) => !open && onClose()}>
@@ -224,6 +252,45 @@ const DarEntradaModal = ({ productos, onClose, onDone }: Props) => {
               Se restará del capital el costo de la entrada
               {costoTotal > 0 ? `: ${Math.floor(costoTotal)} cup` : ""}.
             </p>
+
+            {inflacion && inflacion.tasaHoy ? (
+              <div className="space-y-2 rounded-xl border border-amber-400/20 bg-amber-400/[0.06] p-3">
+                <div className="flex items-center gap-2 text-sm font-medium text-amber-200">
+                  <Sparkles className="size-4 shrink-0" />
+                  Sugerencia contra la inflación
+                </div>
+                <p className="text-xs text-amber-100/60">
+                  Dólar a {Math.round(inflacion.tasaHoy)} ·{" "}
+                  {inflacion.cambioPctVentana >= 0 ? "+" : ""}
+                  {(inflacion.cambioPctVentana * 100).toFixed(1)}% en{" "}
+                  {inflacion.diasVentana} días
+                  {sugerencia ? ` · reposición ~${sugerencia.costoReposicion}` : ""}
+                </p>
+                {sugerencia && (
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <span className="text-sm text-amber-50">
+                      Precio sugerido{" "}
+                      <span className="font-semibold text-emerald-300">
+                        {sugerencia.precioSugerido} cup
+                      </span>
+                      <span className="text-xs text-amber-100/50">
+                        {" "}· +{sugerencia.colchonPct.toFixed(1)}% colchón (7 días)
+                      </span>
+                    </span>
+                    <Button
+                      type="button"
+                      size="sm"
+                      onClick={() =>
+                        setPrecio(String(sugerencia.precioSugerido))
+                      }
+                      className="h-8 bg-amber-500/90 text-white hover:bg-amber-600"
+                    >
+                      Usar
+                    </Button>
+                  </div>
+                )}
+              </div>
+            ) : null}
 
             {error && <p className="text-sm text-red-400">{error}</p>}
           </div>

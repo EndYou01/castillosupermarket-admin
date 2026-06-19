@@ -4,6 +4,7 @@ import {
   ICapitalResponse,
   IDarBajaPayload,
   IDarEntradaPayload,
+  IInflacion,
   IInventarioResponse,
   IPatrimonio,
   IPatrimonioSnapshot,
@@ -127,6 +128,19 @@ export const getPatrimonioHistorial = async (
   } catch (error) {
     console.error("Error obteniendo historial de patrimonio:", error);
     return [];
+  }
+};
+
+export const getInflacion = async (): Promise<IInflacion | null> => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/patrimonio/inflacion`, {
+      method: "GET",
+    });
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    return await response.json();
+  } catch (error) {
+    console.error("Error obteniendo inflación:", error);
+    return null;
   }
 };
 

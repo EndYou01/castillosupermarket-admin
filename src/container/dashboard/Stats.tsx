@@ -145,9 +145,6 @@ const Stats = () => {
                     <dd className="order-first text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl">
                       {formatCurrency(distribution.pagoTrabajadores)}
                     </dd>
-                    <div className="order-first font-thin tracking-tight text-amber-50 sm:text-5xl md:text-3xl flex w-full gap-2">
-                      {formatCurrency(distribution.pagoTrabajadores / 2)} c/u
-                    </div>
                   </div>
 
                   <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l-1 border-stone-50 pl-4">

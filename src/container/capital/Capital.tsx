@@ -1,4 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { DateTime } from "luxon";
+import { CheckCircle2, Clock, TriangleAlert } from "lucide-react";
 import {
   getCapital,
   setCapital,
@@ -77,6 +79,35 @@ const Capital = () => {
     }
   };
 
+  // Estado del cierre del día. El cierre se registra automáticamente cada noche
+  // (Vercel Cron ~22:00 hora de Cuba). El botón manual solo es un respaldo: queda
+  // deshabilitado salvo que la ventana del cierre automático ya pasó y aún no se
+  // registró el cierre de hoy (es decir, el cierre automático falló).
+  const cierreEstado = useMemo(() => {
+    const ahora = DateTime.now().setZone("America/Havana");
+    const fechaHoy = ahora.toFormat("yyyy-MM-dd");
+
+    const hecho =
+      data?.movimientos.some(
+        (m) =>
+          m.tipo === "CIERRE" &&
+          (m.metadata as { fecha?: string } | null)?.fecha === fechaHoy
+      ) ?? false;
+
+    // El cron corre ~22:00; damos 1 h de margen antes de declararlo fallido.
+    const limiteAuto = ahora.set({
+      hour: 23,
+      minute: 0,
+      second: 0,
+      millisecond: 0,
+    });
+    const ventanaPaso = ahora >= limiteAuto;
+
+    if (hecho) return "hecho" as const;
+    if (ventanaPaso) return "fallo" as const;
+    return "pendiente" as const;
+  }, [data]);
+
   if (loading) return <LoadingSpin />;
 
   return (
@@ -143,17 +174,51 @@ const Capital = () => {
               </p>
             </div>
 
-            {/* Acciones */}
-            <div className="flex flex-wrap gap-3 mb-4">
-              <Button
-                onClick={cerrarDia}
-                disabled={closing}
-                className="bg-orange-500/90 text-white hover:bg-orange-600"
-              >
-                {closing ? "Registrando..." : "Registrar cierre de hoy"}
-              </Button>
+            {/* Cierre del día — automático; el botón manual es solo respaldo */}
+            <div className="mb-6">
+              {cierreEstado === "hecho" && (
+                <div className="flex items-center gap-2 text-sm text-emerald-300">
+                  <CheckCircle2 className="size-4 shrink-0" />
+                  <span>Cierre de hoy registrado automáticamente.</span>
+                </div>
+              )}
+
+              {cierreEstado === "pendiente" && (
+                <div className="flex flex-wrap items-center gap-3">
+                  <Button
+                    disabled
+                    className="bg-white/5 text-amber-100/40 cursor-not-allowed"
+                  >
+                    Registrar cierre de hoy
+                  </Button>
+                  <span className="flex items-center gap-1.5 text-xs text-amber-100/50">
+                    <Clock className="size-3.5 shrink-0" />
+                    El cierre se registra automáticamente cada noche.
+                  </span>
+                </div>
+              )}
+
+              {cierreEstado === "fallo" && (
+                <div className="rounded-xl border border-orange-400/30 bg-orange-500/10 p-4">
+                  <div className="mb-2 flex items-center gap-2 text-sm font-medium text-orange-200">
+                    <TriangleAlert className="size-4 shrink-0" />
+                    El cierre automático de hoy no se registró.
+                  </div>
+                  <p className="mb-3 text-xs text-amber-100/60">
+                    Puedes registrarlo manualmente como respaldo.
+                  </p>
+                  <Button
+                    onClick={cerrarDia}
+                    disabled={closing}
+                    className="bg-orange-500 text-white shadow-lg shadow-orange-900/30 hover:bg-orange-600"
+                  >
+                    {closing ? "Registrando..." : "Registrar cierre de hoy"}
+                  </Button>
+                </div>
+              )}
+
+              {aviso && <p className="mt-3 text-sm text-amber-200">{aviso}</p>}
             </div>
-            {aviso && <p className="text-sm text-amber-200 mb-6">{aviso}</p>}
 
             {/* Movimientos */}
             <h3 className="text-xl sm:text-2xl font-semibold text-amber-50 mt-10 mb-4">

@@ -50,7 +50,7 @@ const Patrimonio = () => {
     const res = await guardarSnapshotPatrimonio();
     setSaving(false);
     if (res.ok) {
-      setAviso("Foto guardada");
+      setAviso("Registro guardado");
       cargar();
     } else {
       setAviso(res.error ?? "No se pudo guardar la foto");
@@ -79,7 +79,7 @@ const Patrimonio = () => {
             disabled={saving}
             className="bg-amber-500/90 text-white hover:bg-amber-600 w-fit"
           >
-            {saving ? "Guardando..." : "Guardar foto"}
+            {saving ? "Guardando..." : "Guardar registro"}
           </Button>
         </div>
 
@@ -113,8 +113,8 @@ const Patrimonio = () => {
 
             {data.totalUsd === null && (
               <p className="text-amber-300/90 text-sm mb-6 rounded-lg border border-amber-400/20 bg-amber-400/5 p-3">
-                No hay tasa del dólar disponible. Configura el token de eltoque
-                (<code>EL_TOQUE_API_TOKEN</code>) para ver el patrimonio en USD.
+                No se pudo obtener la tasa del dólar en este momento. Intenta de
+                nuevo en unos minutos.
               </p>
             )}
 
@@ -209,8 +209,8 @@ const Patrimonio = () => {
               </div>
               {historial.length === 0 && (
                 <p className="p-10 text-center text-gray-400">
-                  Aún no hay fotos guardadas. Se guarda una automática cada
-                  noche, o usa "Guardar foto".
+                  Aún no hay registros guardados. Se guarda uno automático cada
+                  noche, o usa "Guardar registro".
                 </p>
               )}
             </div>

@@ -75,7 +75,8 @@ const MonthPicker = ({ value, max, onChange, className }: Props) => {
       </PopoverTrigger>
       <PopoverContent
         align="end"
-        className="w-72 rounded-xl border border-amber-100/10 bg-[#0a3d27] bg-gradient-to-b from-white/[0.04] to-transparent p-3 text-amber-50 shadow-2xl shadow-black/50"
+        style={{ backgroundColor: "#0a3d27" }}
+        className="w-72 rounded-xl border border-amber-100/10 p-3 text-amber-50 shadow-2xl shadow-black/50"
       >
         {/* year nav */}
         <div className="mb-2 flex items-center justify-between">

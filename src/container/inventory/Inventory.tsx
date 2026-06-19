@@ -10,6 +10,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "../../components/shadcn/Select";
+import { PackageMinus, PackagePlus } from "lucide-react";
 import { Button } from "../../components/shadcn/Button";
 import DarBajaModal from "./DarBajaModal";
 import DarEntradaModal from "./DarEntradaModal";
@@ -81,17 +82,19 @@ const Inventory = () => {
                     <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold tracking-tight text-amber-50">
                         Inventario general
                     </h2>
-                    <div className="flex gap-2 w-fit">
+                    <div className="flex gap-2.5 w-fit">
                         <Button
                             onClick={() => setShowEntrada(true)}
-                            className="bg-emerald-500/90 text-white hover:bg-emerald-600 w-fit"
+                            className="h-10 gap-2 rounded-lg border border-emerald-400/30 bg-emerald-400/10 px-4 text-emerald-100 transition-colors hover:border-emerald-400/50 hover:bg-emerald-400/20 hover:text-white"
                         >
+                            <PackagePlus className="size-4" />
                             Dar entrada
                         </Button>
                         <Button
                             onClick={() => setShowBaja(true)}
-                            className="bg-orange-500/90 text-white hover:bg-orange-600 w-fit"
+                            className="h-10 gap-2 rounded-lg bg-orange-500 px-4 text-white shadow-lg shadow-orange-900/30 transition-colors hover:bg-orange-600"
                         >
+                            <PackageMinus className="size-4" />
                             Dar baja
                         </Button>
                     </div>

@@ -35,10 +35,10 @@ const DialogContent = React.forwardRef<
     <DialogOverlay />
     <DialogPrimitive.Content
       ref={ref}
+      style={{ backgroundColor: "#063521" }}
       className={cn(
         "fixed left-1/2 top-1/2 z-50 grid w-full max-w-lg -translate-x-1/2 -translate-y-1/2 gap-4",
         "max-h-[90vh] overflow-y-auto rounded-2xl border border-amber-100/10",
-        "bg-[#063521] bg-gradient-to-b from-white/[0.04] to-transparent",
         "p-6 shadow-2xl shadow-black/50",
         "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 duration-200",
         className

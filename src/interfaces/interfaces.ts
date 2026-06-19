@@ -66,6 +66,32 @@ export interface INavigationRoute {
   index?: boolean;
 }
 
+export interface IMovimientoCapital {
+  id: number;
+  tipo: "CONTEO" | "CIERRE" | "BAJA" | "COMPRA" | "AJUSTE";
+  monto: number;
+  saldoResultante: number;
+  descripcion: string | null;
+  metadata: Record<string, unknown> | null;
+  fecha: string;
+}
+
+export interface ICapitalResponse {
+  monto: number;
+  actualizadoEn: string;
+  movimientos: IMovimientoCapital[];
+}
+
+export interface IDarBajaPayload {
+  variantId: string;
+  itemId?: string;
+  itemName: string;
+  cantidad: number;
+  partePagada: number;
+  costoUnitario?: number;
+  motivo: string;
+}
+
 export interface IInventarioResponse {
   cantidadProductos: number;
   cantidadTotalEnInventario: number;

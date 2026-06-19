@@ -10,27 +10,31 @@ import {
     SelectTrigger,
     SelectValue,
 } from "../../components/shadcn/Select";
+import { Button } from "../../components/shadcn/Button";
+import DarBajaModal from "./DarBajaModal";
 
 const Inventory = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [data, setData] = useState<IInventarioResponse | null>(null);
     const [sortBy, setSortBy] = useState<string>('alphabetical');
+    const [showBaja, setShowBaja] = useState(false);
+
+    const loadInventory = async () => {
+        try {
+            const data = await getInventario();
+            if (data) {
+                setData(data);
+            }
+        } catch (error) {
+            console.error("Error cargando inventario:", error);
+            setError(JSON.stringify(error));
+        } finally {
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
-        const loadInventory = async () => {
-            try {
-                const data = await getInventario();
-                if (data) {
-                    setData(data);
-                }
-            } catch (error) {
-                console.error("Error cargando ventas:", error);
-                setError(JSON.stringify(error));
-            } finally {
-                setLoading(false);
-            }
-        };
         loadInventory();
     }, []);
 
@@ -71,10 +75,16 @@ const Inventory = () => {
 
             <div className="w-full max-w-7xl mx-auto">
                 {/* Header */}
-                <div className="mb-8">
+                <div className="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                     <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold tracking-tight text-amber-50">
                         Inventario general
                     </h2>
+                    <Button
+                        onClick={() => setShowBaja(true)}
+                        className="bg-orange-500/90 text-white hover:bg-orange-600 w-fit"
+                    >
+                        Dar baja
+                    </Button>
                 </div>
 
                 {loading ? (
@@ -267,6 +277,17 @@ const Inventory = () => {
                     </div>
                 )}
             </div>
+
+            {showBaja && (
+                <DarBajaModal
+                    productos={data?.productosConInventario ?? []}
+                    onClose={() => setShowBaja(false)}
+                    onDone={() => {
+                        setShowBaja(false);
+                        loadInventory();
+                    }}
+                />
+            )}
         </div>
     );
 };

@@ -2,6 +2,7 @@ import { SquareTerminal, Store } from "lucide-react";
 import { INavigationRoute } from "../interfaces/interfaces";
 import Dashboard from "../container/dashboard/Dashboard";
 import Inventory from "../container/inventory/Inventory";
+import Capital from "../container/capital/Capital";
 
 export const NavigationRoutes: INavigationRoute[] = [
     {
@@ -13,6 +14,11 @@ export const NavigationRoutes: INavigationRoute[] = [
           title: "Inicio",
           url: "/dashboard/start",
           element: <Dashboard />,
+        },
+        {
+          title: "Capital",
+          url: "/dashboard/capital",
+          element: <Capital />,
         },
       ],
       isActive: true,

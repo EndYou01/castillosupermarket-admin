@@ -104,7 +104,7 @@ const DarBajaModal = ({ productos, onClose, onDone }: Props) => {
   return (
     <Dialog open onOpenChange={(open) => !open && onClose()}>
       <DialogContent
-        style={{ backgroundColor: "#f97316" }}
+        style={{ backgroundColor: "#c2410c" }}
         className="border-orange-200/25"
       >
         <DialogHeader>
@@ -217,7 +217,7 @@ const DarBajaModal = ({ productos, onClose, onDone }: Props) => {
                 />
               </div>
             </div>
-            <p className="-mt-2 text-xs text-amber-100/40">
+            <p className="-mt-2 text-xs text-amber-50/70">
               La parte pagada se suma al capital.
             </p>
 

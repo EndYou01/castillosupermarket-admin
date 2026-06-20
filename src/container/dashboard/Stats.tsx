@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { FormData, IDistribution } from "../../interfaces/interfaces";
-import { getVentasDelDia } from "../../Api/castilloApi";
+import { getVentasDelDia, getExtraccionesRango } from "../../Api/castilloApi";
 import { DatePickerWithRange } from "../../components/shadcn/DatePickerWithRange";
 import { DateRange } from "react-day-picker";
 import { Button } from "../../components/shadcn/Button";
@@ -19,11 +19,16 @@ const Stats = () => {
   const [distribution, setDistribution] = useState<IDistribution | null>(null);
   const [selectedRange, setSelectedRange] = useState<DateRange | undefined>();
   const [receiptsAmount, setReceiptsAmount] = useState<number>(0);
+  // Efectivo extraído de la caja en el rango (extracciones de capital).
+  const [extraido, setExtraido] = useState<number>(0);
 
   useEffect(() => {
     const loadVentas = async () => {
       try {
-        const data = await getVentasDelDia();
+        const [data, extracciones] = await Promise.all([
+          getVentasDelDia(),
+          getExtraccionesRango(),
+        ]);
         if (data) {
           setFormData((prev) => ({
             ...prev,
@@ -35,6 +40,7 @@ const Stats = () => {
 
           setReceiptsAmount(data.recibosProcesados);
         }
+        setExtraido(extracciones?.total ?? 0);
       } catch (error) {
         console.error("Error cargando ventas:", error);
         setError(JSON.stringify(error));
@@ -54,7 +60,10 @@ const Stats = () => {
       const hasta = selectedRange.to
         ? selectedRange.to.toISOString().split("T")[0]
         : desde;
-      const data = await getVentasDelDia(desde, hasta);
+      const [data, extracciones] = await Promise.all([
+        getVentasDelDia(desde, hasta),
+        getExtraccionesRango(desde, hasta),
+      ]);
       if (data) {
         setFormData({
           ventaNeta: data.ventaNeta.toString(),
@@ -66,6 +75,7 @@ const Stats = () => {
         setDistribution(data.distribucion);
         setReceiptsAmount(data.recibosProcesados);
       }
+      setExtraido(extracciones?.total ?? 0);
     } catch (error) {
       console.error("Error cargando ventas:", error);
     } finally {
@@ -179,16 +189,38 @@ const Stats = () => {
                   Caja
                 </h2>
                 <dl className="grid grid-cols-4 gap-8  lg:grid-cols-4">
-                  {formData.metodos_pago.map((metodo) => (
-                    <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l border-stone-50 pl-4">
-                      <dt className="text-base/7 text-amber-100">
-                        {metodo.name}
-                      </dt>
-                      <dd className="order-first text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl">
-                        {formatCurrency(metodo.money_amount)}
-                      </dd>
-                    </div>
-                  ))}
+                  {formData.metodos_pago.map((metodo) => {
+                    const esEfectivoConExtraccion =
+                      metodo.name === "Efectivo" && extraido > 0;
+                    return (
+                      <div
+                        key={metodo.name}
+                        className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l border-stone-50 pl-4"
+                      >
+                        <dt className="text-base/7 text-amber-100">
+                          {metodo.name}
+                          {esEfectivoConExtraccion && (
+                            <span className="ml-1 font-thin text-amber-100/60">
+                              (debería)
+                            </span>
+                          )}
+                        </dt>
+                        <dd className="order-first text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl">
+                          {formatCurrency(metodo.money_amount)}
+                        </dd>
+                        {esEfectivoConExtraccion && (
+                          <div className="-mt-2 flex flex-col gap-0.5 text-sm">
+                            <span className="text-emerald-300">
+                              En caja: {formatCurrency(metodo.money_amount - extraido)}
+                            </span>
+                            <span className="text-amber-100/60">
+                              Extracción: −{formatCurrency(extraido)}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
 
                   <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l border-stone-50 pl-4">
                     <dt className="text-base/7 text-amber-100">

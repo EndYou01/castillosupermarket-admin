@@ -89,6 +89,12 @@ export interface ICapitalResponse {
   movimientos: IMovimientoCapital[];
 }
 
+export interface IExtraccionesResponse {
+  total: number;
+  cantidad: number;
+  movimientos: IMovimientoCapital[];
+}
+
 export interface IBaja {
   id: number;
   variantId: string;

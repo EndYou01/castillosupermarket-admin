@@ -2,6 +2,7 @@ import { DateTime } from 'luxon';
 import {
   IBajasResponse,
   ICapitalResponse,
+  IExtraccionesResponse,
   IDarBajaPayload,
   IDarEntradaPayload,
   IInflacion,
@@ -199,6 +200,35 @@ export const getBajas = async (
     return await response.json();
   } catch (error) {
     console.error("Error obteniendo bajas:", error);
+    return null;
+  }
+};
+
+// Extracciones de caja en un rango (mismo criterio de fechas que getVentasDelDia).
+// Sirve para mostrar en el resumen el efectivo real (ventas − extracciones).
+export const getExtraccionesRango = async (
+  desdeStr?: string,
+  hastaStr?: string
+): Promise<IExtraccionesResponse | null> => {
+  const now = DateTime.now().setZone("America/Havana");
+
+  const desde = desdeStr
+    ? DateTime.fromISO(desdeStr).startOf("day").toUTC().toISO()
+    : now.startOf("day").toUTC().toISO();
+
+  const hasta = hastaStr
+    ? DateTime.fromISO(hastaStr).endOf("day").toUTC().toISO()
+    : now.endOf("day").toUTC().toISO();
+
+  try {
+    const response = await fetch(
+      `${API_BASE_URL}/capital/extracciones?desde=${desde}&hasta=${hasta}`,
+      { method: "GET" }
+    );
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    return await response.json();
+  } catch (error) {
+    console.error("Error obteniendo extracciones:", error);
     return null;
   }
 };

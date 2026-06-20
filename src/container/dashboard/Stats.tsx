@@ -1,86 +1,57 @@
-import { useEffect, useState } from "react";
-import { FormData, IDistribution } from "../../interfaces/interfaces";
+import { useState } from "react";
+import { DateTime } from "luxon";
+import {
+  IExtraccionesResponse,
+  IVentasResponse,
+} from "../../interfaces/interfaces";
 import { getVentasDelDia, getExtraccionesRango } from "../../Api/castilloApi";
+import { useCachedResource } from "../../hooks/useCachedResource";
 import { DatePickerWithRange } from "../../components/shadcn/DatePickerWithRange";
 import { DateRange } from "react-day-picker";
 import { Button } from "../../components/shadcn/Button";
 import LoadingSpin from "../../components/LoadingSpin";
 
 const Stats = () => {
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [formData, setFormData] = useState<FormData>({
-    ventaNeta: "",
-    gananciaBruta: "",
-    fechaInicio: "",
-    fechaFin: "",
-    metodos_pago: [],
-  });
-  const [distribution, setDistribution] = useState<IDistribution | null>(null);
   const [selectedRange, setSelectedRange] = useState<DateRange | undefined>();
-  const [receiptsAmount, setReceiptsAmount] = useState<number>(0);
+  // Rango aplicado (null = hoy). Cambiar la clave hace que el hook recargue
+  // (o muestre al instante lo cacheado si ese rango ya se consultó).
+  const [range, setRange] = useState<{ desde: string; hasta: string } | null>(
+    null
+  );
+
+  const hoy = DateTime.now().setZone("America/Havana").toFormat("yyyy-MM-dd");
+  const sufijo = range ? `${range.desde}:${range.hasta}` : hoy;
+
+  const { data: ventas, loading, error } = useCachedResource<IVentasResponse>(
+    `ventas:${sufijo}`,
+    () =>
+      range ? getVentasDelDia(range.desde, range.hasta) : getVentasDelDia(),
+    { ttl: 120_000 }
+  );
+  const { data: extracciones } = useCachedResource<IExtraccionesResponse>(
+    `extracciones:${sufijo}`,
+    () =>
+      range
+        ? getExtraccionesRango(range.desde, range.hasta)
+        : getExtraccionesRango(),
+    { ttl: 120_000 }
+  );
+
+  const distribution = ventas?.distribucion ?? null;
+  const metodosPago = ventas?.metodos_pago ?? [];
+  const ventaNeta = ventas?.ventaNeta ?? 0;
+  const gananciaBruta = ventas?.beneficioBruto ?? 0;
+  const receiptsAmount = ventas?.recibosProcesados ?? 0;
   // Efectivo extraído de la caja en el rango (extracciones de capital).
-  const [extraido, setExtraido] = useState<number>(0);
+  const extraido = extracciones?.total ?? 0;
 
-  useEffect(() => {
-    const loadVentas = async () => {
-      try {
-        const [data, extracciones] = await Promise.all([
-          getVentasDelDia(),
-          getExtraccionesRango(),
-        ]);
-        if (data) {
-          setFormData((prev) => ({
-            ...prev,
-            ventaNeta: data.ventaNeta.toString(),
-            gananciaBruta: data.beneficioBruto.toString(),
-            metodos_pago: data.metodos_pago,
-          }));
-          setDistribution(data.distribucion);
-
-          setReceiptsAmount(data.recibosProcesados);
-        }
-        setExtraido(extracciones?.total ?? 0);
-      } catch (error) {
-        console.error("Error cargando ventas:", error);
-        setError(JSON.stringify(error));
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadVentas();
-  }, []);
-
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     if (!selectedRange?.from) return;
-
-    setLoading(true);
-    try {
-      const desde = selectedRange.from.toISOString().split("T")[0];
-      const hasta = selectedRange.to
-        ? selectedRange.to.toISOString().split("T")[0]
-        : desde;
-      const [data, extracciones] = await Promise.all([
-        getVentasDelDia(desde, hasta),
-        getExtraccionesRango(desde, hasta),
-      ]);
-      if (data) {
-        setFormData({
-          ventaNeta: data.ventaNeta.toString(),
-          gananciaBruta: data.beneficioBruto.toString(),
-          fechaInicio: desde,
-          fechaFin: hasta,
-          metodos_pago: data.metodos_pago,
-        });
-        setDistribution(data.distribucion);
-        setReceiptsAmount(data.recibosProcesados);
-      }
-      setExtraido(extracciones?.total ?? 0);
-    } catch (error) {
-      console.error("Error cargando ventas:", error);
-    } finally {
-      setLoading(false);
-    }
+    const desde = selectedRange.from.toISOString().split("T")[0];
+    const hasta = selectedRange.to
+      ? selectedRange.to.toISOString().split("T")[0]
+      : desde;
+    setRange({ desde, hasta });
   };
 
   const formatCurrency = (amount: number) =>
@@ -115,8 +86,12 @@ const Stats = () => {
           <LoadingSpin />
         ) : (
           <div>
-            {error || !distribution ? (
-              <p className="text-red-500">{error}</p>
+            {!distribution ? (
+              <p className="text-red-500">
+                {error
+                  ? "No se pudo cargar el resumen."
+                  : "Sin datos para este rango."}
+              </p>
             ) : (
               <div className="mx-auto max-w-7xl px-3 lg:px-8 mt-12">
                 <h2 className="text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl mt-14 mb-6 flex justify-between items-center">
@@ -128,7 +103,7 @@ const Stats = () => {
                   <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l border-stone-50 pl-4">
                     <dt className="text-base/7 text-amber-100">Venta neta</dt>
                     <dd className="order-first text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl">
-                      {formatCurrency(+formData.ventaNeta)}
+                      {formatCurrency(ventaNeta)}
                     </dd>
                   </div>
 
@@ -136,16 +111,14 @@ const Stats = () => {
                     <dt className="text-base/7 text-amber-100">
                       Ganancia bruta{" "}
                       <span>
-                        {(
-                          (Number(formData.gananciaBruta) /
-                            Number(formData.ventaNeta)) *
-                          100
-                        ).toFixed(2)}
+                        {ventaNeta
+                          ? ((gananciaBruta / ventaNeta) * 100).toFixed(2)
+                          : "0.00"}
                         %
                       </span>
                     </dt>
                     <dd className="order-first text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl">
-                      {formatCurrency(+formData.gananciaBruta)}
+                      {formatCurrency(gananciaBruta)}
                     </dd>
                   </div>
 
@@ -189,7 +162,7 @@ const Stats = () => {
                   Caja
                 </h2>
                 <dl className="grid grid-cols-4 gap-8  lg:grid-cols-4">
-                  {formData.metodos_pago.map((metodo) => {
+                  {metodosPago.map((metodo) => {
                     const esEfectivoConExtraccion =
                       metodo.name === "Efectivo" && extraido > 0;
                     // En efectivo mostramos lo que REALMENTE hay en caja (ventas
@@ -223,7 +196,7 @@ const Stats = () => {
                     </dt>
                     <dd className="order-first text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl">
                       {formatCurrency(
-                        formData.metodos_pago.find(
+                        metodosPago.find(
                           (metodo) => metodo.name === "Tarjeta Fiscal",
                         )?.descuento ?? 0,
                       )}{" "}
@@ -234,7 +207,7 @@ const Stats = () => {
                     <dt className="text-base/7 text-orange-400">Total</dt>
                     <dd className="order-first text-3xl font-semibold tracking-tight text-orange-400 sm:text-5xl">
                       {formatCurrency(
-                        formData.metodos_pago.reduce(
+                        metodosPago.reduce(
                           (sum, metodo) => sum + metodo.money_amount,
                           0,
                         ) - extraido,

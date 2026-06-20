@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { DateTime } from "luxon";
 import { getBajas } from "../../Api/castilloApi";
 import { IBajasResponse } from "../../interfaces/interfaces";
+import { useCachedResource } from "../../hooks/useCachedResource";
 import LoadingSpin from "../../components/LoadingSpin";
 import { MonthPicker } from "../../components/shadcn/MonthPicker";
 
@@ -14,23 +15,13 @@ const formatCurrency = (amount: number) =>
 const Bajas = () => {
   const mesActual = DateTime.now().setZone("America/Havana").toFormat("yyyy-MM");
   const [mes, setMes] = useState(mesActual);
-  const [loading, setLoading] = useState(true);
-  const [data, setData] = useState<IBajasResponse | null>(null);
-  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    let activo = true;
-    setLoading(true);
-    getBajas(mes).then((res) => {
-      if (!activo) return;
-      if (res) setData(res);
-      else setError("No se pudieron cargar las bajas");
-      setLoading(false);
-    });
-    return () => {
-      activo = false;
-    };
-  }, [mes]);
+  // Las bajas de un mes cambian poco; las cacheamos con TTL largo.
+  const { data, loading, error } = useCachedResource<IBajasResponse>(
+    `bajas:${mes}`,
+    () => getBajas(mes),
+    { ttl: 300_000 }
+  );
 
   return (
     <div className="w-full min-h-screen p-4 lg:p-8">
@@ -44,8 +35,6 @@ const Bajas = () => {
 
         {loading ? (
           <LoadingSpin />
-        ) : error ? (
-          <p className="text-red-500">{error}</p>
         ) : data ? (
           <>
             {/* Totales */}
@@ -152,6 +141,8 @@ const Bajas = () => {
               )}
             </div>
           </>
+        ) : error ? (
+          <p className="text-red-500">No se pudieron cargar las bajas.</p>
         ) : null}
       </div>
     </div>

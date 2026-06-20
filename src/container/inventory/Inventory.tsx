@@ -1,6 +1,8 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import castilloLogo from "../../assets/castillo_logo.png";
 import { getInventario } from "../../Api/castilloApi";
+import { useCachedResource } from "../../hooks/useCachedResource";
+import { CACHE_KEYS, invalidateCache } from "../../lib/resourceCache";
 import LoadingSpin from "../../components/LoadingSpin";
 import { IInventarioResponse } from "../../interfaces/interfaces";
 import {
@@ -17,31 +19,26 @@ import DarEntradaModal from "./DarEntradaModal";
 import TransformarModal from "./TransformarModal";
 
 const Inventory = () => {
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-    const [data, setData] = useState<IInventarioResponse | null>(null);
     const [sortBy, setSortBy] = useState<string>('alphabetical');
     const [showBaja, setShowBaja] = useState(false);
     const [showEntrada, setShowEntrada] = useState(false);
     const [showTransformar, setShowTransformar] = useState(false);
 
-    const loadInventory = async () => {
-        try {
-            const data = await getInventario();
-            if (data) {
-                setData(data);
-            }
-        } catch (error) {
-            console.error("Error cargando inventario:", error);
-            setError(JSON.stringify(error));
-        } finally {
-            setLoading(false);
-        }
-    };
+    const { data, loading, error, refetch } = useCachedResource<IInventarioResponse>(
+        CACHE_KEYS.inventario,
+        () => getInventario(),
+        { ttl: 120_000 }
+    );
 
-    useEffect(() => {
-        loadInventory();
-    }, []);
+    // Tras una entrada/baja/transformación cambia el inventario y, además, el
+    // capital y el patrimonio (entrada resta capital, baja suma parte pagada).
+    // Recargamos el inventario e invalidamos los otros para que se refresquen.
+    const recargarTrasMutacion = () => {
+        invalidateCache(CACHE_KEYS.capital);
+        invalidateCache(CACHE_KEYS.patrimonio);
+        invalidateCache(CACHE_KEYS.patrimonioHistorial);
+        refetch();
+    };
 
     const formatCurrency = (amount: number) =>
         new Intl.NumberFormat("es-MX", {
@@ -113,8 +110,8 @@ const Inventory = () => {
                     <div className="flex justify-center items-center py-20">
                         <LoadingSpin />
                     </div>
-                ) : error ? (
-                    <p className="text-red-500 p-4">{error}</p>
+                ) : !data && error ? (
+                    <p className="text-red-500 p-4">No se pudo cargar el inventario.</p>
                 ) : data && (
                     <div className="space-y-8">
                         {/* Stats Section */}
@@ -306,7 +303,7 @@ const Inventory = () => {
                     onClose={() => setShowBaja(false)}
                     onDone={() => {
                         setShowBaja(false);
-                        loadInventory();
+                        recargarTrasMutacion();
                     }}
                 />
             )}
@@ -317,7 +314,7 @@ const Inventory = () => {
                     onClose={() => setShowEntrada(false)}
                     onDone={() => {
                         setShowEntrada(false);
-                        loadInventory();
+                        recargarTrasMutacion();
                     }}
                 />
             )}
@@ -328,7 +325,7 @@ const Inventory = () => {
                     onClose={() => setShowTransformar(false)}
                     onDone={() => {
                         setShowTransformar(false);
-                        loadInventory();
+                        recargarTrasMutacion();
                     }}
                 />
             )}

@@ -1,8 +1,10 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { DateTime } from "luxon";
 import { CheckCircle2, Clock, TriangleAlert } from "lucide-react";
 import { getCapital, setCapital, registrarCierre } from "../../Api/castilloApi";
 import { ICapitalResponse, IMovimientoCapital } from "../../interfaces/interfaces";
+import { useCachedResource } from "../../hooks/useCachedResource";
+import { CACHE_KEYS, invalidateCache } from "../../lib/resourceCache";
 import { Button } from "../../components/shadcn/Button";
 import LoadingSpin from "../../components/LoadingSpin";
 import CajaModal from "./CajaModal";
@@ -24,10 +26,6 @@ const tipoLabel: Record<IMovimientoCapital["tipo"], string> = {
 };
 
 const Capital = () => {
-  const [loading, setLoading] = useState(true);
-  const [data, setData] = useState<ICapitalResponse | null>(null);
-  const [error, setError] = useState<string | null>(null);
-
   const [editing, setEditing] = useState(false);
   const [nuevoMonto, setNuevoMonto] = useState("");
   const [saving, setSaving] = useState(false);
@@ -38,16 +36,19 @@ const Capital = () => {
   // Extracción de caja / inyección de capital (se manejan en un modal).
   const [accion, setAccion] = useState<"extraccion" | "inyeccion" | null>(null);
 
-  const cargar = async () => {
-    const res = await getCapital();
-    if (res) setData(res);
-    else setError("No se pudo cargar el capital");
-    setLoading(false);
-  };
+  const { data, loading, error, refetch } = useCachedResource<ICapitalResponse>(
+    CACHE_KEYS.capital,
+    () => getCapital(),
+    { ttl: 30_000 }
+  );
 
-  useEffect(() => {
-    cargar();
-  }, []);
+  // Cualquier mutación de capital también mueve el patrimonio: lo invalidamos
+  // para que se recalcule al entrar, y refrescamos el capital al instante.
+  const recargar = () => {
+    invalidateCache(CACHE_KEYS.patrimonio);
+    invalidateCache(CACHE_KEYS.patrimonioHistorial);
+    refetch();
+  };
 
   const guardarConteo = async () => {
     const monto = Number(nuevoMonto);
@@ -60,9 +61,9 @@ const Capital = () => {
     const res = await setCapital(monto, "Conteo manual");
     setSaving(false);
     if (res) {
-      setData(res);
       setEditing(false);
       setNuevoMonto("");
+      recargar();
     } else {
       setAviso("No se pudo guardar");
     }
@@ -75,7 +76,7 @@ const Capital = () => {
     setClosing(false);
     if (res.ok) {
       setAviso("Cierre registrado");
-      cargar();
+      recargar();
     } else {
       setAviso(res.error ?? "No se pudo registrar el cierre");
     }
@@ -119,7 +120,9 @@ const Capital = () => {
           Capital disponible
         </h2>
 
-        {error && <p className="text-red-500">{error}</p>}
+        {error && !data && (
+          <p className="text-red-500">No se pudo cargar el capital.</p>
+        )}
 
         {data && (
           <>
@@ -296,7 +299,7 @@ const Capital = () => {
           onClose={() => setAccion(null)}
           onDone={() => {
             setAccion(null);
-            cargar();
+            recargar();
           }}
         />
       )}

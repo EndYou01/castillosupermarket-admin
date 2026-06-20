@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { TrendingDown, TrendingUp } from "lucide-react";
 import {
   getPatrimonio,
@@ -9,6 +9,8 @@ import {
   IPatrimonio,
   IPatrimonioSnapshot,
 } from "../../interfaces/interfaces";
+import { useCachedResource } from "../../hooks/useCachedResource";
+import { CACHE_KEYS } from "../../lib/resourceCache";
 import { Button } from "../../components/shadcn/Button";
 import LoadingSpin from "../../components/LoadingSpin";
 
@@ -24,25 +26,22 @@ const fmtUsd = (n: number | null) =>
       new Intl.NumberFormat("en-US", { maximumFractionDigits: 2 }).format(n);
 
 const Patrimonio = () => {
-  const [loading, setLoading] = useState(true);
-  const [data, setData] = useState<IPatrimonio | null>(null);
-  const [historial, setHistorial] = useState<IPatrimonioSnapshot[]>([]);
   const [saving, setSaving] = useState(false);
   const [aviso, setAviso] = useState<string | null>(null);
 
-  const cargar = async () => {
-    const [p, h] = await Promise.all([
-      getPatrimonio(),
-      getPatrimonioHistorial(60),
-    ]);
-    setData(p);
-    setHistorial(h);
-    setLoading(false);
-  };
-
-  useEffect(() => {
-    cargar();
-  }, []);
+  const { data, loading, refetch: refetchPatrimonio } =
+    useCachedResource<IPatrimonio>(
+      CACHE_KEYS.patrimonio,
+      () => getPatrimonio(),
+      { ttl: 60_000 }
+    );
+  const { data: historialData, refetch: refetchHistorial } =
+    useCachedResource<IPatrimonioSnapshot[]>(
+      CACHE_KEYS.patrimonioHistorial,
+      () => getPatrimonioHistorial(60),
+      { ttl: 60_000 }
+    );
+  const historial = historialData ?? [];
 
   const guardar = async () => {
     setSaving(true);
@@ -51,7 +50,8 @@ const Patrimonio = () => {
     setSaving(false);
     if (res.ok) {
       setAviso("Registro guardado");
-      cargar();
+      refetchPatrimonio();
+      refetchHistorial();
     } else {
       setAviso(res.error ?? "No se pudo guardar la foto");
     }

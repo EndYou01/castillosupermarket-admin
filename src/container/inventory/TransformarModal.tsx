@@ -36,6 +36,7 @@ const TransformarModal = ({ productos, onClose, onDone }: Props) => {
   const [x, setX] = useState<ProductoInventario | null>(null);
   const [y, setY] = useState<ProductoInventario | null>(null);
   const [cantidad, setCantidad] = useState("");
+  const [cantidadDestino, setCantidadDestino] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -68,11 +69,16 @@ const TransformarModal = ({ productos, onClose, onDone }: Props) => {
     }
     const qty = Number(cantidad);
     if (!Number.isFinite(qty) || qty <= 0) {
-      setError("La cantidad debe ser mayor que 0");
+      setError("La cantidad a transformar debe ser mayor que 0");
       return;
     }
     if (qty > x.quantity) {
       setError(`Solo hay ${x.quantity} de ${x.item_name}`);
+      return;
+    }
+    const qtyDestino = Number(cantidadDestino);
+    if (!Number.isFinite(qtyDestino) || qtyDestino <= 0) {
+      setError("La cantidad resultante debe ser mayor que 0");
       return;
     }
 
@@ -81,6 +87,7 @@ const TransformarModal = ({ productos, onClose, onDone }: Props) => {
       variantXId: x.variant_id,
       variantYId: y.variant_id,
       cantidad: qty,
+      cantidadDestino: qtyDestino,
       itemXName: x.item_name,
       itemYName: y.item_name,
     });
@@ -196,26 +203,42 @@ const TransformarModal = ({ productos, onClose, onDone }: Props) => {
               </div>
             </div>
 
-            <div className="space-y-1.5">
-              <label className="text-sm font-medium text-amber-100/80">
-                Cantidad a transformar
-              </label>
-              <input
-                type="number"
-                value={cantidad}
-                onChange={(e) => setCantidad(e.target.value)}
-                min={0}
-                max={x?.quantity}
-                placeholder="0"
-                className={`${fieldClass} h-11`}
-              />
-              {x && y && (
-                <p className="text-xs text-amber-100/40">
-                  {x.item_name} baja {cantidad || 0} · {y.item_name} sube{" "}
-                  {cantidad || 0}
-                </p>
-              )}
+            <div className="flex items-end gap-3">
+              <div className="flex-1 space-y-1.5">
+                <label className="text-sm font-medium text-amber-100/80">
+                  Cantidad a transformar
+                </label>
+                <input
+                  type="number"
+                  value={cantidad}
+                  onChange={(e) => setCantidad(e.target.value)}
+                  min={0}
+                  max={x?.quantity}
+                  placeholder="0"
+                  className={`${fieldClass} h-11`}
+                />
+              </div>
+              <ArrowRight className="mb-3 size-5 shrink-0 text-amber-100/40" />
+              <div className="flex-1 space-y-1.5">
+                <label className="text-sm font-medium text-amber-100/80">
+                  Unidades resultantes
+                </label>
+                <input
+                  type="number"
+                  value={cantidadDestino}
+                  onChange={(e) => setCantidadDestino(e.target.value)}
+                  min={0}
+                  placeholder="0"
+                  className={`${fieldClass} h-11`}
+                />
+              </div>
             </div>
+            {x && y && (
+              <p className="text-xs text-amber-100/40">
+                {x.item_name} baja {cantidad || 0} · {y.item_name} sube{" "}
+                {cantidadDestino || 0}
+              </p>
+            )}
 
             {error && <p className="text-sm text-red-400">{error}</p>}
           </div>

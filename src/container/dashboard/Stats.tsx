@@ -20,7 +20,6 @@ const Stats = () => {
   const [selectedRange, setSelectedRange] = useState<DateRange | undefined>();
   const [receiptsAmount, setReceiptsAmount] = useState<number>(0);
 
-
   useEffect(() => {
     const loadVentas = async () => {
       try {
@@ -116,40 +115,14 @@ const Stats = () => {
                 </h2>
                 {/* ----------------------------- */}
                 <dl className="grid grid-cols-4 gap-8 lg:grid-cols-6 items-start justify-start">
-                  <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l-1 border-stone-50 pl-4">
+                  <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l border-stone-50 pl-4">
                     <dt className="text-base/7 text-amber-100">Venta neta</dt>
                     <dd className="order-first text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl">
                       {formatCurrency(+formData.ventaNeta)}
                     </dd>
                   </div>
 
-                  <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l-1 border-stone-50 pl-4">
-                    <dt className="text-base/7 text-amber-100">Efectivo en caja</dt>
-                    <dd className="order-first text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl">
-                      {formatCurrency(
-                        formData.metodos_pago.find(
-                          (m) => m.name === "Efectivo"
-                        )?.money_amount ?? 0
-                      )}
-                    </dd>
-                  </div>
-
-                  <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l-1 border-stone-50 pl-4">
-                    <dt className="text-base/7 text-amber-100">Transferencia</dt>
-                    <dd className="order-first text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl">
-                      {formatCurrency(
-                        formData.metodos_pago.reduce(
-                          (s, m) => s + m.money_amount,
-                          0
-                        ) -
-                          (formData.metodos_pago.find(
-                            (m) => m.name === "Efectivo"
-                          )?.money_amount ?? 0)
-                      )}
-                    </dd>
-                  </div>
-
-                  <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l-1 border-stone-50 pl-4">
+                  <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l border-stone-50 pl-4">
                     <dt className="text-base/7 text-amber-100">
                       Ganancia bruta{" "}
                       <span>
@@ -166,14 +139,14 @@ const Stats = () => {
                     </dd>
                   </div>
 
-                  <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l-1 border-stone-50 pl-4">
+                  <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l border-stone-50 pl-4">
                     <dt className="text-base/7 text-amber-100">Salarios</dt>
                     <dd className="order-first text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl">
                       {formatCurrency(distribution.pagoTrabajadores)}
                     </dd>
                   </div>
 
-                  <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l-1 border-stone-50 pl-4">
+                  <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l border-stone-50 pl-4">
                     <dt className="text-base/7 text-amber-100">Impuestos</dt>
                     <dd className="order-first text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl">
                       {formatCurrency(distribution.pagoImpuestos)}
@@ -181,7 +154,7 @@ const Stats = () => {
                   </div>
 
                   {distribution && distribution.gastosExtras > 0 && (
-                    <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l-1 border-stone-50 pl-4">
+                    <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l border-stone-50 pl-4">
                       <dt className="text-base/7 text-amber-100">
                         Gastos extra
                       </dt>
@@ -191,7 +164,7 @@ const Stats = () => {
                     </div>
                   )}
 
-                  <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l-1 border-stone-50 pl-4">
+                  <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l border-stone-50 pl-4">
                     <dt className="text-base/7 text-orange-400">
                       Ganancia neta
                     </dt>
@@ -203,11 +176,11 @@ const Stats = () => {
 
                 {/* ----------------------------- */}
                 <h2 className="text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl mt-14 mb-6 flex justify-between items-center">
-                  Métodos de pago
+                  Caja
                 </h2>
                 <dl className="grid grid-cols-4 gap-8  lg:grid-cols-4">
                   {formData.metodos_pago.map((metodo) => (
-                    <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l-1 border-stone-50 pl-4">
+                    <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l border-stone-50 pl-4">
                       <dt className="text-base/7 text-amber-100">
                         {metodo.name}
                       </dt>
@@ -217,29 +190,27 @@ const Stats = () => {
                     </div>
                   ))}
 
-                  <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l-1 border-stone-50 pl-4">
+                  <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l border-stone-50 pl-4">
                     <dt className="text-base/7 text-amber-100">
                       Descuento fiscal
                     </dt>
                     <dd className="order-first text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl">
                       {formatCurrency(
                         formData.metodos_pago.find(
-                          (metodo) => metodo.name === "Tarjeta Fiscal"
-                        )?.descuento ?? 0
+                          (metodo) => metodo.name === "Tarjeta Fiscal",
+                        )?.descuento ?? 0,
                       )}{" "}
                     </dd>
                   </div>
 
-                  <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l-1 border-stone-50 pl-4">
-                    <dt className="text-base/7 text-orange-400">
-                      Total
-                    </dt>
+                  <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l border-stone-50 pl-4">
+                    <dt className="text-base/7 text-orange-400">Total</dt>
                     <dd className="order-first text-3xl font-semibold tracking-tight text-orange-400 sm:text-5xl">
                       {formatCurrency(
                         formData.metodos_pago.reduce(
                           (sum, metodo) => sum + metodo.money_amount,
-                          0
-                        )
+                          0,
+                        ),
                       )}{" "}
                     </dd>
                   </div>
@@ -251,7 +222,7 @@ const Stats = () => {
                   Reinversión
                 </h2>
                 <dl className="grid grid-cols-4 gap-8 lg:grid-cols-6">
-                  <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l-1 border-stone-50 pl-4">
+                  <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l border-stone-50 pl-4">
                     <dt className="text-base/7 text-orange-400">
                       Total reinversión
                     </dt>
@@ -260,7 +231,7 @@ const Stats = () => {
                     </dd>
                   </div>
 
-                  <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l-1 border-stone-50 pl-4">
+                  <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l border-stone-50 pl-4">
                     <dt className="text-base/7 text-amber-100">
                       Estímulo trabajadores
                     </dt>
@@ -269,7 +240,7 @@ const Stats = () => {
                     </dd>
                   </div>
 
-                  <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l-1 border-stone-50 pl-4">
+                  <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l border-stone-50 pl-4">
                     <dt className="text-base/7 text-amber-100">
                       Limpieza (Mary)
                     </dt>
@@ -285,7 +256,7 @@ const Stats = () => {
                   Jefes
                 </h2>
                 <dl className="grid grid-cols-4 gap-8 lg:grid-cols-4">
-                  <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l-1 border-stone-50 pl-4">
+                  <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l border-stone-50 pl-4">
                     <dt className="text-base/7 text-amber-100">
                       Alfonso <span className="font-thin">25%</span>
                     </dt>
@@ -294,7 +265,7 @@ const Stats = () => {
                     </dd>
                   </div>
 
-                  <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l-1 border-stone-50 pl-4">
+                  <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l border-stone-50 pl-4">
                     <dt className="text-base/7 text-amber-100">
                       Senjudo <span className="font-thin">25%</span>
                     </dt>
@@ -303,7 +274,7 @@ const Stats = () => {
                     </dd>
                   </div>
 
-                  <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l-1 border-stone-50 pl-4">
+                  <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l border-stone-50 pl-4">
                     <dt className="text-base/7 text-amber-100">
                       Josse <span className="font-thin">25%</span>
                     </dt>
@@ -312,7 +283,7 @@ const Stats = () => {
                     </dd>
                   </div>
 
-                  <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l-1 border-stone-50 pl-4">
+                  <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l border-stone-50 pl-4">
                     <dt className="text-base/7 text-amber-100">
                       Julio <span className="font-thin">25%</span>
                     </dt>
@@ -321,10 +292,8 @@ const Stats = () => {
                     </dd>
                   </div>
 
-                  <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l-1 border-stone-50 pl-4">
-                    <dt className="text-base/7 text-orange-400">
-                      Total jefes
-                    </dt>
+                  <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l border-stone-50 pl-4">
+                    <dt className="text-base/7 text-orange-400">Total jefes</dt>
                     <dd className="order-first text-3xl font-semibold tracking-tight text-orange-400 sm:text-5xl">
                       {formatCurrency(distribution.jefes.total)}
                     </dd>

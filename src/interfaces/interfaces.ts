@@ -161,7 +161,8 @@ export interface IDarEntradaPayload {
 export interface ITransformarPayload {
   variantXId: string;
   variantYId: string;
-  cantidad: number;
+  cantidad: number; // unidades de X que se consumen (N)
+  cantidadDestino: number; // unidades de Y que se producen (M)
   itemXName?: string;
   itemYName?: string;
 }

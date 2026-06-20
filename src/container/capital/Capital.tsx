@@ -5,6 +5,8 @@ import {
   getCapital,
   setCapital,
   registrarCierre,
+  registrarExtraccion,
+  registrarInyeccion,
 } from "../../Api/castilloApi";
 import { ICapitalResponse, IMovimientoCapital } from "../../interfaces/interfaces";
 import { Button } from "../../components/shadcn/Button";
@@ -22,6 +24,8 @@ const tipoLabel: Record<IMovimientoCapital["tipo"], string> = {
   BAJA: "Baja",
   COMPRA: "Compra",
   AJUSTE: "Ajuste",
+  EXTRACCION: "Extracción de caja",
+  INYECCION: "Inyección de capital",
 };
 
 const Capital = () => {
@@ -35,6 +39,12 @@ const Capital = () => {
 
   const [closing, setClosing] = useState(false);
   const [aviso, setAviso] = useState<string | null>(null);
+
+  // Extracción de caja / inyección de capital.
+  const [accion, setAccion] = useState<"extraccion" | "inyeccion" | null>(null);
+  const [montoAccion, setMontoAccion] = useState("");
+  const [descAccion, setDescAccion] = useState("");
+  const [savingAccion, setSavingAccion] = useState(false);
 
   const cargar = async () => {
     const res = await getCapital();
@@ -76,6 +86,27 @@ const Capital = () => {
       cargar();
     } else {
       setAviso(res.error ?? "No se pudo registrar el cierre");
+    }
+  };
+
+  const ejecutarAccion = async () => {
+    const monto = Number(montoAccion);
+    if (!Number.isFinite(monto) || monto <= 0) {
+      setAviso("Escribe un monto mayor que 0");
+      return;
+    }
+    setSavingAccion(true);
+    setAviso(null);
+    const fn = accion === "extraccion" ? registrarExtraccion : registrarInyeccion;
+    const res = await fn(monto, descAccion || undefined);
+    setSavingAccion(false);
+    if (res.ok) {
+      setAccion(null);
+      setMontoAccion("");
+      setDescAccion("");
+      cargar();
+    } else {
+      setAviso(res.error ?? "No se pudo registrar");
     }
   };
 
@@ -218,6 +249,74 @@ const Capital = () => {
               )}
 
               {aviso && <p className="mt-3 text-sm text-amber-200">{aviso}</p>}
+            </div>
+
+            {/* Extracción de caja / Inyección de capital */}
+            <div className="mb-8">
+              {accion === null ? (
+                <div className="flex flex-wrap gap-2">
+                  <Button
+                    onClick={() => {
+                      setAccion("extraccion");
+                      setAviso(null);
+                    }}
+                    className="bg-white/10 text-amber-50 hover:bg-white/20"
+                  >
+                    Extracción de caja
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      setAccion("inyeccion");
+                      setAviso(null);
+                    }}
+                    className="bg-emerald-500/90 text-white hover:bg-emerald-600"
+                  >
+                    Inyección de capital
+                  </Button>
+                </div>
+              ) : (
+                <div className="rounded-xl border border-white/10 bg-white/[0.04] p-4 space-y-3 max-w-md">
+                  <p className="text-sm font-medium text-amber-100">
+                    {accion === "extraccion"
+                      ? "Extracción de caja (pasa al capital para comprar)"
+                      : "Inyección de capital (dinero externo)"}
+                  </p>
+                  <input
+                    type="number"
+                    autoFocus
+                    value={montoAccion}
+                    onChange={(e) => setMontoAccion(e.target.value)}
+                    placeholder="Monto"
+                    className="w-full rounded bg-white/10 border border-white/20 px-4 py-2 text-amber-50 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                  />
+                  <input
+                    type="text"
+                    value={descAccion}
+                    onChange={(e) => setDescAccion(e.target.value)}
+                    placeholder="Nota (opcional)"
+                    className="w-full rounded bg-white/10 border border-white/20 px-4 py-2 text-amber-50 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                  />
+                  <div className="flex gap-2">
+                    <Button
+                      onClick={ejecutarAccion}
+                      disabled={savingAccion}
+                      className="bg-amber-500/90 text-white hover:bg-amber-600"
+                    >
+                      {savingAccion ? "Guardando..." : "Confirmar"}
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        setAccion(null);
+                        setMontoAccion("");
+                        setDescAccion("");
+                      }}
+                      className="bg-white/10 text-amber-50 hover:bg-white/20"
+                    >
+                      Cancelar
+                    </Button>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Movimientos */}

@@ -124,6 +124,32 @@ const Stats = () => {
                   </div>
 
                   <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l-1 border-stone-50 pl-4">
+                    <dt className="text-base/7 text-amber-100">Efectivo en caja</dt>
+                    <dd className="order-first text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl">
+                      {formatCurrency(
+                        formData.metodos_pago.find(
+                          (m) => m.name === "Efectivo"
+                        )?.money_amount ?? 0
+                      )}
+                    </dd>
+                  </div>
+
+                  <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l-1 border-stone-50 pl-4">
+                    <dt className="text-base/7 text-amber-100">Transferencia</dt>
+                    <dd className="order-first text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl">
+                      {formatCurrency(
+                        formData.metodos_pago.reduce(
+                          (s, m) => s + m.money_amount,
+                          0
+                        ) -
+                          (formData.metodos_pago.find(
+                            (m) => m.name === "Efectivo"
+                          )?.money_amount ?? 0)
+                      )}
+                    </dd>
+                  </div>
+
+                  <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l-1 border-stone-50 pl-4">
                     <dt className="text-base/7 text-amber-100">
                       Ganancia bruta{" "}
                       <span>

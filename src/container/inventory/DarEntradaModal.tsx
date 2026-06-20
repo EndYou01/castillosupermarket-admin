@@ -107,7 +107,7 @@ const DarEntradaModal = ({ productos, onClose, onDone }: Props) => {
 
   // Recomendación de precio: mantiene tu margen actual sobre el costo nuevo y le
   // suma un colchón por la subida del dólar durante ~7 días de rotación.
-  const HOLDING_DAYS = 7;
+  const HOLDING_DAYS = 4;
   const sugerencia = useMemo(() => {
     if (!selected || !inflacion || selected.cost <= 0) return null;
     const costoNum = Number(costo);
@@ -274,7 +274,7 @@ const DarEntradaModal = ({ productos, onClose, onDone }: Props) => {
                         {sugerencia.precioSugerido} cup
                       </span>
                       <span className="text-xs text-amber-100/50">
-                        {" "}· +{sugerencia.colchonPct.toFixed(1)}% colchón (7 días)
+                        {" "}· +{sugerencia.colchonPct.toFixed(1)}% colchón (4 días)
                       </span>
                     </span>
                     <Button

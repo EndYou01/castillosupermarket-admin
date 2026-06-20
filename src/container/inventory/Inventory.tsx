@@ -10,10 +10,11 @@ import {
     SelectTrigger,
     SelectValue,
 } from "../../components/shadcn/Select";
-import { PackageMinus, PackagePlus } from "lucide-react";
+import { PackageMinus, PackagePlus, Repeat } from "lucide-react";
 import { Button } from "../../components/shadcn/Button";
 import DarBajaModal from "./DarBajaModal";
 import DarEntradaModal from "./DarEntradaModal";
+import TransformarModal from "./TransformarModal";
 
 const Inventory = () => {
     const [loading, setLoading] = useState(true);
@@ -22,6 +23,7 @@ const Inventory = () => {
     const [sortBy, setSortBy] = useState<string>('alphabetical');
     const [showBaja, setShowBaja] = useState(false);
     const [showEntrada, setShowEntrada] = useState(false);
+    const [showTransformar, setShowTransformar] = useState(false);
 
     const loadInventory = async () => {
         try {
@@ -82,7 +84,14 @@ const Inventory = () => {
                     <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold tracking-tight text-amber-50">
                         Inventario general
                     </h2>
-                    <div className="flex gap-2.5 w-fit">
+                    <div className="flex flex-wrap gap-2.5 w-fit">
+                        <Button
+                            onClick={() => setShowTransformar(true)}
+                            className="h-10 gap-2 rounded-lg border border-sky-400/30 bg-sky-400/10 px-4 text-sky-100 transition-colors hover:border-sky-400/50 hover:bg-sky-400/20 hover:text-white"
+                        >
+                            <Repeat className="size-4" />
+                            Transformar
+                        </Button>
                         <Button
                             onClick={() => setShowEntrada(true)}
                             className="h-10 gap-2 rounded-lg border border-emerald-400/30 bg-emerald-400/10 px-4 text-emerald-100 transition-colors hover:border-emerald-400/50 hover:bg-emerald-400/20 hover:text-white"
@@ -308,6 +317,17 @@ const Inventory = () => {
                     onClose={() => setShowEntrada(false)}
                     onDone={() => {
                         setShowEntrada(false);
+                        loadInventory();
+                    }}
+                />
+            )}
+
+            {showTransformar && (
+                <TransformarModal
+                    productos={data?.productosConInventario ?? []}
+                    onClose={() => setShowTransformar(false)}
+                    onDone={() => {
+                        setShowTransformar(false);
                         loadInventory();
                     }}
                 />

@@ -68,7 +68,14 @@ export interface INavigationRoute {
 
 export interface IMovimientoCapital {
   id: number;
-  tipo: "CONTEO" | "CIERRE" | "BAJA" | "COMPRA" | "AJUSTE";
+  tipo:
+    | "CONTEO"
+    | "CIERRE"
+    | "BAJA"
+    | "COMPRA"
+    | "AJUSTE"
+    | "EXTRACCION"
+    | "INYECCION";
   monto: number;
   saldoResultante: number;
   descripcion: string | null;
@@ -149,6 +156,14 @@ export interface IDarEntradaPayload {
   cantidad: number;
   nuevoCosto: number;
   nuevoPrecio: number;
+}
+
+export interface ITransformarPayload {
+  variantXId: string;
+  variantYId: string;
+  cantidad: number;
+  itemXName?: string;
+  itemYName?: string;
 }
 
 export interface IInventarioResponse {

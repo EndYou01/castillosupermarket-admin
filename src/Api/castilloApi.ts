@@ -8,6 +8,7 @@ import {
   IInventarioResponse,
   IPatrimonio,
   IPatrimonioSnapshot,
+  ITransformarPayload,
   IVentasResponse,
 } from '../interfaces/interfaces';
 
@@ -199,6 +200,71 @@ export const getBajas = async (
   } catch (error) {
     console.error("Error obteniendo bajas:", error);
     return null;
+  }
+};
+
+// Extracción de caja: pasa dinero al capital disponible (para comprar).
+export const registrarExtraccion = async (
+  monto: number,
+  descripcion?: string
+): Promise<{ ok: boolean; error?: string }> => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/capital/extraccion`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ monto, descripcion }),
+    });
+    if (!response.ok) {
+      const body = await response.json().catch(() => ({}));
+      return { ok: false, error: body?.message || `Error ${response.status}` };
+    }
+    return { ok: true };
+  } catch (error) {
+    console.error("Error en extracción:", error);
+    return { ok: false, error: "No se pudo conectar con el servidor" };
+  }
+};
+
+// Inyección de capital: mete dinero externo al capital disponible.
+export const registrarInyeccion = async (
+  monto: number,
+  descripcion?: string
+): Promise<{ ok: boolean; error?: string }> => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/capital/inyeccion`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ monto, descripcion }),
+    });
+    if (!response.ok) {
+      const body = await response.json().catch(() => ({}));
+      return { ok: false, error: body?.message || `Error ${response.status}` };
+    }
+    return { ok: true };
+  } catch (error) {
+    console.error("Error en inyección:", error);
+    return { ok: false, error: "No se pudo conectar con el servidor" };
+  }
+};
+
+// Transformación de producto: convierte N de X en N de Y.
+export const transformarProducto = async (
+  payload: ITransformarPayload
+): Promise<{ ok: boolean; error?: string }> => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/capital/transformacion`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    if (!response.ok) {
+      const body = await response.json().catch(() => ({}));
+      return { ok: false, error: body?.message || `Error ${response.status}` };
+    }
+    return { ok: true };
+  } catch (error) {
+    console.error("Error en transformación:", error);
+    return { ok: false, error: "No se pudo conectar con el servidor" };
   }
 };
 

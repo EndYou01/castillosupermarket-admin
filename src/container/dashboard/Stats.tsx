@@ -192,6 +192,11 @@ const Stats = () => {
                   {formData.metodos_pago.map((metodo) => {
                     const esEfectivoConExtraccion =
                       metodo.name === "Efectivo" && extraido > 0;
+                    // En efectivo mostramos lo que REALMENTE hay en caja (ventas
+                    // en efectivo menos lo extraído), no lo que habría sin extraer.
+                    const valor = esEfectivoConExtraccion
+                      ? metodo.money_amount - extraido
+                      : metodo.money_amount;
                     return (
                       <div
                         key={metodo.name}
@@ -199,24 +204,14 @@ const Stats = () => {
                       >
                         <dt className="text-base/7 text-amber-100">
                           {metodo.name}
-                          {esEfectivoConExtraccion && (
-                            <span className="ml-1 font-thin text-amber-100/60">
-                              (debería)
-                            </span>
-                          )}
                         </dt>
                         <dd className="order-first text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl">
-                          {formatCurrency(metodo.money_amount)}
+                          {formatCurrency(valor)}
                         </dd>
                         {esEfectivoConExtraccion && (
-                          <div className="-mt-2 flex flex-col gap-0.5 text-sm">
-                            <span className="text-emerald-300">
-                              En caja: {formatCurrency(metodo.money_amount - extraido)}
-                            </span>
-                            <span className="text-amber-100/60">
-                              Extracción: −{formatCurrency(extraido)}
-                            </span>
-                          </div>
+                          <span className="-mt-2 text-sm text-amber-100/60">
+                            Extracción: −{formatCurrency(extraido)}
+                          </span>
                         )}
                       </div>
                     );
@@ -242,7 +237,7 @@ const Stats = () => {
                         formData.metodos_pago.reduce(
                           (sum, metodo) => sum + metodo.money_amount,
                           0,
-                        ),
+                        ) - extraido,
                       )}{" "}
                     </dd>
                   </div>

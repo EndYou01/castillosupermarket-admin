@@ -31,6 +31,8 @@ const CONFIG: Record<
     iconWrap: string;
     confirmClass: string;
     confirmLabel: string;
+    noteLabel?: string;
+    notePlaceholder?: string;
   }
 > = {
   extraccion: {
@@ -59,6 +61,8 @@ const CONFIG: Record<
     confirmClass:
       "bg-red-500 text-white shadow-lg shadow-red-900/30 hover:bg-red-600",
     confirmLabel: "Registrar gasto",
+    noteLabel: "Nota",
+    notePlaceholder: "Motivo o detalle",
   },
 };
 
@@ -75,6 +79,11 @@ const CajaModal = ({ tipo, onClose, onDone }: Props) => {
     const valor = Number(monto);
     if (!Number.isFinite(valor) || valor <= 0) {
       setError("El monto debe ser mayor que 0");
+      return;
+    }
+
+    if (tipo === "gasto" && !descripcion.trim()) {
+      setError("La nota es obligatoria para registrar un gasto");
       return;
     }
 
@@ -123,13 +132,13 @@ const CajaModal = ({ tipo, onClose, onDone }: Props) => {
 
           <div className="space-y-1.5">
             <label className="text-sm font-medium text-amber-100/80">
-              Nota (opcional)
+              {cfg.noteLabel ?? "Nota (opcional)"}
             </label>
             <input
               type="text"
               value={descripcion}
               onChange={(e) => setDescripcion(e.target.value)}
-              placeholder="Motivo o detalle"
+              placeholder={cfg.notePlaceholder ?? "Motivo o detalle"}
               className={`${fieldClass} h-11`}
             />
           </div>

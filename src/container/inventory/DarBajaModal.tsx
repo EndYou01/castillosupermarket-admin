@@ -35,7 +35,8 @@ interface Props {
 
 const MOTIVOS = [
   "Merma / vencido / dañado",
-  "Baja del local (padre del jefe)",
+  "Baja del local (jefes)",
+  "Baja del local (Loretto)",
   "Ajuste de conteo",
 ];
 
@@ -48,7 +49,7 @@ const DarBajaModal = ({ productos, onClose, onDone }: Props) => {
   const [selected, setSelected] = useState<ProductoInventario | null>(null);
   const [cantidad, setCantidad] = useState("");
   const [partePagada, setPartePagada] = useState("");
-  const [motivo, setMotivo] = useState(MOTIVOS[0]);
+  const [motivo, setMotivo] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -79,6 +80,10 @@ const DarBajaModal = ({ productos, onClose, onDone }: Props) => {
     }
     if (!Number.isFinite(pagada) || pagada < 0) {
       setError("La parte pagada no es válida");
+      return;
+    }
+    if (!motivo) {
+      setError("Selecciona un motivo");
       return;
     }
 

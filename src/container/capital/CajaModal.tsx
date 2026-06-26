@@ -57,9 +57,9 @@ const CONFIG: Record<
     title: "Registrar gasto",
     description: "Resta dinero del capital disponible.",
     icon: Minus,
-    iconWrap: "bg-red-500/15 text-red-300 ring-1 ring-red-400/20",
+    iconWrap: "bg-orange-500/15 text-orange-300 ring-1 ring-orange-400/20",
     confirmClass:
-      "bg-red-500 text-white shadow-lg shadow-red-900/30 hover:bg-red-600",
+      "bg-orange-500 text-white shadow-lg shadow-orange-900/30 hover:bg-orange-600",
     confirmLabel: "Registrar gasto",
     noteLabel: "Nota",
     notePlaceholder: "Motivo o detalle",

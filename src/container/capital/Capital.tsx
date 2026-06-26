@@ -252,7 +252,7 @@ const Capital = () => {
                     setAccion("gasto");
                     setAviso(null);
                   }}
-                  className="bg-red-500/90 text-white hover:bg-red-600"
+                  className="bg-orange-500/90 text-white hover:bg-orange-600"
                 >
                   Registrar gasto
                 </Button>

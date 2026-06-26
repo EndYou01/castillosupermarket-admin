@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { ArrowDownToLine, ArrowUpFromLine } from "lucide-react";
-import { registrarExtraccion, registrarInyeccion } from "../../Api/castilloApi";
+import { ArrowDownToLine, ArrowUpFromLine, Minus } from "lucide-react";
+import { registrarExtraccion, registrarInyeccion, registrarGasto } from "../../Api/castilloApi";
 import { Button } from "../../components/shadcn/Button";
 import {
   Dialog,
@@ -11,7 +11,7 @@ import {
   DialogTitle,
 } from "../../components/shadcn/Dialog";
 
-type Tipo = "extraccion" | "inyeccion";
+type Tipo = "extraccion" | "inyeccion" | "gasto";
 
 interface Props {
   tipo: Tipo;
@@ -51,6 +51,15 @@ const CONFIG: Record<
       "bg-emerald-500 text-white shadow-lg shadow-emerald-900/30 hover:bg-emerald-600",
     confirmLabel: "Registrar inyección",
   },
+  gasto: {
+    title: "Registrar gasto",
+    description: "Resta dinero del capital disponible.",
+    icon: Minus,
+    iconWrap: "bg-red-500/15 text-red-300 ring-1 ring-red-400/20",
+    confirmClass:
+      "bg-red-500 text-white shadow-lg shadow-red-900/30 hover:bg-red-600",
+    confirmLabel: "Registrar gasto",
+  },
 };
 
 const CajaModal = ({ tipo, onClose, onDone }: Props) => {
@@ -70,7 +79,10 @@ const CajaModal = ({ tipo, onClose, onDone }: Props) => {
     }
 
     setSubmitting(true);
-    const fn = tipo === "extraccion" ? registrarExtraccion : registrarInyeccion;
+    let fn;
+    if (tipo === "extraccion") fn = registrarExtraccion;
+    else if (tipo === "inyeccion") fn = registrarInyeccion;
+    else fn = registrarGasto;
     const res = await fn(valor, descripcion.trim() || undefined);
     setSubmitting(false);
 

@@ -75,7 +75,8 @@ export interface IMovimientoCapital {
     | "COMPRA"
     | "AJUSTE"
     | "EXTRACCION"
-    | "INYECCION";
+    | "INYECCION"
+    | "GASTO";
   monto: number;
   saldoResultante: number;
   descripcion: string | null;

@@ -277,6 +277,28 @@ export const registrarInyeccion = async (
   }
 };
 
+// Registro de gasto: resta dinero del capital disponible.
+export const registrarGasto = async (
+  monto: number,
+  descripcion?: string
+): Promise<{ ok: boolean; error?: string }> => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/capital/gasto`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ monto, descripcion }),
+    });
+    if (!response.ok) {
+      const body = await response.json().catch(() => ({}));
+      return { ok: false, error: body?.message || `Error ${response.status}` };
+    }
+    return { ok: true };
+  } catch (error) {
+    console.error("Error en gasto:", error);
+    return { ok: false, error: "No se pudo conectar con el servidor" };
+  }
+};
+
 // Transformación de producto: convierte N de X en N de Y.
 export const transformarProducto = async (
   payload: ITransformarPayload

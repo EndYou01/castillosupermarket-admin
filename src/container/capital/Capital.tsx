@@ -23,6 +23,7 @@ const tipoLabel: Record<IMovimientoCapital["tipo"], string> = {
   AJUSTE: "Ajuste",
   EXTRACCION: "Extracción de caja",
   INYECCION: "Inyección de capital",
+  GASTO: "Gasto",
 };
 
 const Capital = () => {
@@ -33,8 +34,8 @@ const Capital = () => {
   const [closing, setClosing] = useState(false);
   const [aviso, setAviso] = useState<string | null>(null);
 
-  // Extracción de caja / inyección de capital (se manejan en un modal).
-  const [accion, setAccion] = useState<"extraccion" | "inyeccion" | null>(null);
+  // Extracción de caja / inyección de capital / gasto (se manejan en un modal).
+  const [accion, setAccion] = useState<"extraccion" | "inyeccion" | "gasto" | null>(null);
 
   const { data, loading, error, refetch } = useCachedResource<ICapitalResponse>(
     CACHE_KEYS.capital,
@@ -225,7 +226,7 @@ const Capital = () => {
               {aviso && <p className="mt-3 text-sm text-amber-200">{aviso}</p>}
             </div>
 
-            {/* Extracción de caja / Inyección de capital */}
+            {/* Extracción de caja / Inyección de capital / Gasto */}
             <div className="mb-8">
               <div className="flex flex-wrap gap-2">
                 <Button
@@ -245,6 +246,15 @@ const Capital = () => {
                   className="bg-emerald-500/90 text-white hover:bg-emerald-600"
                 >
                   Inyección de capital
+                </Button>
+                <Button
+                  onClick={() => {
+                    setAccion("gasto");
+                    setAviso(null);
+                  }}
+                  className="bg-red-500/90 text-white hover:bg-red-600"
+                >
+                  Registrar gasto
                 </Button>
               </div>
             </div>

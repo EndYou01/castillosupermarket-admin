@@ -5,6 +5,7 @@ import { IBajasResponse } from "../../interfaces/interfaces";
 import { useCachedResource } from "../../hooks/useCachedResource";
 import LoadingSpin from "../../components/LoadingSpin";
 import { MonthPicker } from "../../components/shadcn/MonthPicker";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../components/shadcn/Select";
 
 const formatCurrency = (amount: number) =>
   new Intl.NumberFormat("es-MX", {
@@ -15,6 +16,7 @@ const formatCurrency = (amount: number) =>
 const Bajas = () => {
   const mesActual = DateTime.now().setZone("America/Havana").toFormat("yyyy-MM");
   const [mes, setMes] = useState(mesActual);
+  const [motivoFilter, setMotivoFilter] = useState<string>("todos");
 
   // Las bajas de un mes cambian poco; las cacheamos con TTL largo.
   const { data, loading, error } = useCachedResource<IBajasResponse>(
@@ -23,6 +25,18 @@ const Bajas = () => {
     { ttl: 300_000 }
   );
 
+  // Obtener motivos únicos para el filtro
+  const motivosUnicos = data 
+    ? Array.from(new Set(data.bajas.map((b) => b.motivo))).sort()
+    : [];
+
+  // Filtrar bajas por motivo
+  const bajasFiltradas = data
+    ? motivoFilter === "todos"
+      ? data.bajas
+      : data.bajas.filter((b) => b.motivo === motivoFilter)
+    : [];
+
   return (
     <div className="w-full min-h-screen p-4 lg:p-8">
       <div className="mx-auto max-w-5xl">
@@ -30,7 +44,22 @@ const Bajas = () => {
           <h2 className="text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl">
             Movimientos de bajas
           </h2>
-          <MonthPicker value={mes} max={mesActual} onChange={setMes} />
+          <div className="flex items-center gap-3">
+            <Select value={motivoFilter} onValueChange={setMotivoFilter}>
+              <SelectTrigger className="w-fit">
+                <SelectValue placeholder="Todos los motivos" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="todos">Todos los motivos</SelectItem>
+                {motivosUnicos.map((motivo) => (
+                  <SelectItem key={motivo} value={motivo}>
+                    {motivo}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <MonthPicker value={mes} max={mesActual} onChange={setMes} />
+          </div>
         </div>
 
         {loading ? (
@@ -81,11 +110,11 @@ const Bajas = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {data.bajas.map((b, i) => (
+                    {bajasFiltradas.map((b, i) => (
                       <tr
                         key={b.id}
                         className={`border-b border-white/5 ${
-                          i % 2 === 0 ? "bg-white/[0.02]" : ""
+                          i % 2 === 0 ? "bg-white/2" : ""
                         }`}
                       >
                         <td className="py-3 px-5 text-gray-300">
@@ -110,7 +139,7 @@ const Bajas = () => {
 
               {/* Cards móvil */}
               <div className="md:hidden divide-y divide-white/5">
-                {data.bajas.map((b) => (
+                {bajasFiltradas.map((b) => (
                   <div key={b.id} className="p-4">
                     <div className="flex justify-between items-start gap-2 mb-1">
                       <span className="text-amber-50 font-medium">
@@ -134,9 +163,11 @@ const Bajas = () => {
                 ))}
               </div>
 
-              {data.bajas.length === 0 && (
+              {bajasFiltradas.length === 0 && (
                 <p className="p-10 text-center text-gray-400">
-                  No hay bajas registradas en este mes.
+                  {motivoFilter === "todos" 
+                    ? "No hay bajas registradas en este mes."
+                    : "No hay bajas con este motivo."}
                 </p>
               )}
             </div>

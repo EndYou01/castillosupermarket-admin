@@ -253,7 +253,7 @@ const DarEntradaModal = ({ productos, onClose, onDone }: Props) => {
               {costoTotal > 0 ? `: ${Math.floor(costoTotal)} cup` : ""}.
             </p>
 
-            {inflacion && inflacion.tasaHoy ? (
+            {inflacion && inflacion.tasaHoy && inflacion.cambioPctVentana > 0 ? (
               <div className="space-y-2 rounded-xl border border-amber-400/20 bg-amber-400/[0.06] p-3">
                 <div className="flex items-center gap-2 text-sm font-medium text-amber-200">
                   <Sparkles className="size-4 shrink-0" />

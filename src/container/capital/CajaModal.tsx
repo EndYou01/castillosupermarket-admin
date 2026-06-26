@@ -33,6 +33,7 @@ const CONFIG: Record<
     confirmLabel: string;
     noteLabel?: string;
     notePlaceholder?: string;
+    bgClass?: string;
   }
 > = {
   extraccion: {
@@ -63,6 +64,7 @@ const CONFIG: Record<
     confirmLabel: "Registrar gasto",
     noteLabel: "Nota",
     notePlaceholder: "Motivo o detalle",
+    bgClass: "bg-orange-700",
   },
 };
 
@@ -101,7 +103,7 @@ const CajaModal = ({ tipo, onClose, onDone }: Props) => {
 
   return (
     <Dialog open onOpenChange={(open) => !open && onClose()}>
-      <DialogContent>
+      <DialogContent className={cfg.bgClass ?? ""}>
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2.5">
             <span

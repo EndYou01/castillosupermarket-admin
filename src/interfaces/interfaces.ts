@@ -202,7 +202,9 @@ export interface IReposicionItem {
   diasParaAgotar: number | null;
   sugerenciaCompra: number;
   costo: number;
+  precio: number;
   agotado: boolean;
+  ventaPerdidaDia: number;
 }
 
 export interface IMargenItem {
@@ -210,12 +212,79 @@ export interface IMargenItem {
   itemName: string;
   costo: number;
   precio: number;
+  stock: number;
   margenPct: number;
   unidadesVendidas: number;
   ingresos: number;
   ganancia: number;
+  gmroi: number | null;
   claseABC: "A" | "B" | "C" | "-";
   bajoMargen: boolean;
+}
+
+export interface IVentaPerdidaItem {
+  variantId: string;
+  itemName: string;
+  velocidadDia: number;
+  precio: number;
+  perdidaDia: number;
+}
+
+export interface IBucketHora {
+  hora: number;
+  recibos: number;
+  ingresos: number;
+}
+export interface IBucketDia {
+  dia: number;
+  nombre: string;
+  recibos: number;
+  ingresos: number;
+}
+export interface ITemporal {
+  porHora: IBucketHora[];
+  porDia: IBucketDia[];
+  horaPico: number;
+  diaPico: string;
+}
+
+export interface ISerieDia {
+  fecha: string;
+  recibos: number;
+  ingresos: number;
+  ticket: number;
+}
+export interface ITicketAnalisis {
+  promedio: number;
+  serie: ISerieDia[];
+  tendenciaPct: number;
+}
+
+export interface IConcentracion {
+  totalProductosVendidos: number;
+  productosPara80pct: number;
+  pctTop5: number;
+  pctTop10: number;
+  pctTop20: number;
+}
+
+export interface IInventarioInmovilItem {
+  variantId: string;
+  itemName: string;
+  stock: number;
+  costo: number;
+  capitalInmovilizado: number;
+  diasSinVenta: number | null;
+  ultimaVenta: string | null;
+}
+export interface IInventarioInmovilResponse {
+  lookbackDias: number;
+  buckets: {
+    etiqueta: string;
+    items: IInventarioInmovilItem[];
+    totalCapital: number;
+  }[];
+  totalCapital: number;
 }
 
 export interface ICapitalParadoItem {
@@ -239,12 +308,20 @@ export interface IAnaliticaResponse {
   recibosAnalizados: number;
   coberturaObjetivoDias: number;
   reposicion: IReposicionItem[];
+  ventaPerdida: {
+    totalDia: number;
+    totalMes: number;
+    items: IVentaPerdidaItem[];
+  };
   margenes: {
     items: IMargenItem[];
     capitalParado: ICapitalParadoItem[];
     totalCapitalParado: number;
   };
   combos: IComboItem[];
+  temporal: ITemporal;
+  ticket: ITicketAnalisis;
+  concentracion: IConcentracion;
 }
 
 export interface IAsistenteResponse {

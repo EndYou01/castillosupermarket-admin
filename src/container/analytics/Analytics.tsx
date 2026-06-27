@@ -2,9 +2,9 @@ import { useState } from "react";
 import ReactMarkdown from "react-markdown";
 import {
   AlertTriangle,
-  Boxes,
   Lightbulb,
   Sparkles,
+  TrendingDown,
   TrendingUp,
 } from "lucide-react";
 import { getAnalitica, getAsistenteIA } from "../../Api/castilloApi";
@@ -12,17 +12,7 @@ import { IAnaliticaResponse } from "../../interfaces/interfaces";
 import { useCachedResource } from "../../hooks/useCachedResource";
 import { Button } from "../../components/shadcn/Button";
 import LoadingSpin from "../../components/LoadingSpin";
-
-const fmtCup = (n: number) =>
-  new Intl.NumberFormat("es-MX", { maximumFractionDigits: 0 }).format(
-    Math.round(n)
-  ) + " cup";
-
-const RANGOS = [
-  { label: "7 días", dias: 7 },
-  { label: "30 días", dias: 30 },
-  { label: "90 días", dias: 90 },
-];
+import { fmtCup, Seccion, SelectorRango, Tabla } from "./shared";
 
 const Analytics = () => {
   const [dias, setDias] = useState(30);
@@ -53,21 +43,7 @@ const Analytics = () => {
           <h2 className="text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl">
             Analítica
           </h2>
-          <div className="flex gap-2">
-            {RANGOS.map((r) => (
-              <Button
-                key={r.dias}
-                onClick={() => setDias(r.dias)}
-                className={
-                  dias === r.dias
-                    ? "bg-amber-500/90 text-white hover:bg-amber-600"
-                    : "bg-white/5 text-amber-100 hover:bg-white/10"
-                }
-              >
-                {r.label}
-              </Button>
-            ))}
-          </div>
+          <SelectorRango dias={dias} setDias={setDias} />
         </div>
 
         {/* Botón asistente IA */}
@@ -98,6 +74,26 @@ const Analytics = () => {
               días.
             </p>
 
+            {/* ---------- Venta perdida por agotados ---------- */}
+            {data.ventaPerdida.totalDia > 0 && (
+              <div className="mb-8 flex flex-col gap-1 rounded-2xl border border-red-400/30 bg-red-500/10 p-5">
+                <div className="flex items-center gap-2 text-red-300">
+                  <TrendingDown className="size-5" />
+                  <span className="text-sm font-medium uppercase tracking-wide">
+                    Venta perdida por agotados
+                  </span>
+                </div>
+                <p className="text-2xl font-semibold text-red-100 sm:text-3xl">
+                  ~{fmtCup(data.ventaPerdida.totalDia)} / día
+                </p>
+                <p className="text-sm text-red-200/70">
+                  ≈ {fmtCup(data.ventaPerdida.totalMes)} al mes que se escapan
+                  por {data.ventaPerdida.items.length} producto(s) agotado(s)
+                  con demanda.
+                </p>
+              </div>
+            )}
+
             {/* ---------- 1. Reposición ---------- */}
             <Seccion
               icono={<AlertTriangle className="size-5 text-amber-400" />}
@@ -110,6 +106,7 @@ const Analytics = () => {
                   "Stock",
                   "Vende/día",
                   "Se agota en",
+                  "Pierde/día",
                   "Comprar",
                 ]}
                 vacio="Sin datos de venta en este rango."
@@ -135,6 +132,9 @@ const Analytics = () => {
                         {r.diasParaAgotar} días
                       </span>
                     ),
+                    <span className="text-red-300">
+                      {r.ventaPerdidaDia > 0 ? fmtCup(r.ventaPerdidaDia) : "—"}
+                    </span>,
                     <span className="text-emerald-300 font-medium">
                       {r.sugerenciaCompra > 0 ? `+${r.sugerenciaCompra}` : "—"}
                     </span>,
@@ -147,13 +147,14 @@ const Analytics = () => {
             <Seccion
               icono={<TrendingUp className="size-5 text-emerald-400" />}
               titulo="Márgenes y productos estrella"
-              subtitulo="Clase A = los que más ganancia dejan (regla 80/15/5)"
+              subtitulo="Clase A = los que más ganancia dejan. GMROI = ganancia por cada CUP invertido en stock (mayor = mejor)."
             >
               <Tabla
                 headers={[
                   "Producto",
                   "ABC",
                   "Margen",
+                  "GMROI",
                   "Vendidos",
                   "Ganancia",
                 ]}
@@ -172,34 +173,20 @@ const Analytics = () => {
                       {Math.round(m.margenPct * 100)}%
                       {m.precio <= m.costo ? " ⚠" : ""}
                     </span>,
+                    <span
+                      className={
+                        m.gmroi === null
+                          ? "text-gray-500"
+                          : m.gmroi >= 1
+                          ? "text-emerald-300"
+                          : "text-amber-300"
+                      }
+                    >
+                      {m.gmroi === null ? "—" : `${m.gmroi.toFixed(2)}×`}
+                    </span>,
                     <span className="text-gray-300">{m.unidadesVendidas}</span>,
                     <span className="text-emerald-300">
                       {fmtCup(m.ganancia)}
-                    </span>,
-                  ],
-                }))}
-              />
-            </Seccion>
-
-            {/* Capital parado */}
-            <Seccion
-              icono={<Boxes className="size-5 text-orange-400" />}
-              titulo="Capital parado"
-              subtitulo={`Total inmovilizado: ${fmtCup(
-                data.margenes.totalCapitalParado
-              )} en productos sin ventas`}
-            >
-              <Tabla
-                headers={["Producto", "Stock", "Costo", "Inmovilizado"]}
-                vacio="No hay capital parado. ¡Bien!"
-                filas={data.margenes.capitalParado.map((c) => ({
-                  key: c.variantId,
-                  celdas: [
-                    <span className="text-amber-50">{c.itemName}</span>,
-                    <span className="text-gray-300">{c.stock}</span>,
-                    <span className="text-gray-300">{fmtCup(c.costo)}</span>,
-                    <span className="text-orange-300">
-                      {fmtCup(c.capitalInmovilizado)}
                     </span>,
                   ],
                 }))}
@@ -239,110 +226,6 @@ const Analytics = () => {
 };
 
 // ---------- Subcomponentes de presentación ----------
-
-const Seccion = ({
-  icono,
-  titulo,
-  subtitulo,
-  children,
-}: {
-  icono: React.ReactNode;
-  titulo: string;
-  subtitulo?: string;
-  children: React.ReactNode;
-}) => (
-  <section className="mb-10">
-    <div className="flex items-center gap-2 mb-1">
-      {icono}
-      <h3 className="text-xl sm:text-2xl font-semibold text-amber-50">
-        {titulo}
-      </h3>
-    </div>
-    {subtitulo && (
-      <p className="text-sm text-amber-100/50 mb-4">{subtitulo}</p>
-    )}
-    {children}
-  </section>
-);
-
-const Tabla = ({
-  headers,
-  filas,
-  vacio,
-  limite = 10,
-}: {
-  headers: string[];
-  filas: { key: string; celdas: React.ReactNode[]; destacar?: boolean }[];
-  vacio: string;
-  limite?: number;
-}) => {
-  // Las filas ya vienen ordenadas por importancia desde el backend, así que
-  // mostramos solo las primeras `limite` (las más relevantes) hasta expandir.
-  const [expandido, setExpandido] = useState(false);
-  const hayMas = filas.length > limite;
-  const visibles = expandido ? filas : filas.slice(0, limite);
-
-  return (
-    <div className="bg-white/5 border border-white/10 rounded-xl overflow-hidden">
-      <div className="overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b border-white/10 text-gray-300">
-              {headers.map((h, i) => (
-                <th
-                  key={h}
-                  className={`py-3 px-5 font-medium ${
-                    i === 0 ? "text-left" : "text-right"
-                  }`}
-                >
-                  {h}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {visibles.map((fila, idx) => (
-              <tr
-                key={fila.key}
-                className={`border-b border-white/5 ${
-                  fila.destacar
-                    ? "bg-red-500/5"
-                    : idx % 2 === 0
-                    ? "bg-white/[0.02]"
-                    : ""
-                }`}
-              >
-                {fila.celdas.map((celda, i) => (
-                  <td
-                    key={i}
-                    className={`py-3 px-5 ${
-                      i === 0 ? "text-left" : "text-right"
-                    }`}
-                  >
-                    {celda}
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      {filas.length === 0 && (
-        <p className="p-10 text-center text-gray-400">{vacio}</p>
-      )}
-      {hayMas && (
-        <button
-          onClick={() => setExpandido((v) => !v)}
-          className="w-full py-3 text-sm font-medium text-amber-200 hover:bg-white/5 transition-colors border-t border-white/10"
-        >
-          {expandido
-            ? "Ver menos"
-            : `Ver más (${filas.length - limite} restantes)`}
-        </button>
-      )}
-    </div>
-  );
-};
 
 const ChipABC = ({ clase }: { clase: "A" | "B" | "C" | "-" }) => {
   const color =

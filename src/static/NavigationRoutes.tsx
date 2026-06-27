@@ -6,6 +6,7 @@ import Capital from "../container/capital/Capital";
 import Bajas from "../container/bajas/Bajas";
 import Patrimonio from "../container/patrimonio/Patrimonio";
 import Analytics from "../container/analytics/Analytics";
+import AnalyticsVentas from "../container/analytics/AnalyticsVentas";
 
 export const NavigationRoutes: INavigationRoute[] = [
   {
@@ -60,6 +61,11 @@ export const NavigationRoutes: INavigationRoute[] = [
         title: "Resumen",
         url: "/analytics/resumen",
         element: <Analytics />,
+      },
+      {
+        title: "Ventas",
+        url: "/analytics/ventas",
+        element: <AnalyticsVentas />,
       },
     ],
     isActive: false,

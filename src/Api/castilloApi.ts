@@ -13,6 +13,7 @@ import {
   IVentasResponse,
   IAnaliticaResponse,
   IAsistenteResponse,
+  IInventarioInmovilResponse,
 } from '../interfaces/interfaces';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL;
@@ -423,3 +424,21 @@ export const getAsistenteIA = async (
     return { ok: false, mensaje: "No se pudo conectar con la IA." };
   }
 };
+
+// Inventario inmóvil / muerto con antigüedad (mira ~120 días hacia atrás).
+// Es pesado de calcular la 1ª vez (el backend lo cachea 1h).
+export const getInventarioInmovil =
+  async (): Promise<IInventarioInmovilResponse | null> => {
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/analytics/inventario-inmovil`,
+        { method: "GET" }
+      );
+      if (!response.ok)
+        throw new Error(`HTTP error! status: ${response.status}`);
+      return await response.json();
+    } catch (error) {
+      console.error("Error obteniendo inventario inmóvil:", error);
+      return null;
+    }
+  };

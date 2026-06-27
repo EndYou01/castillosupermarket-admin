@@ -1,4 +1,5 @@
 import { useState } from "react";
+import ReactMarkdown from "react-markdown";
 import {
   AlertTriangle,
   Lightbulb,
@@ -11,16 +12,22 @@ import { IAnaliticaResponse } from "../../interfaces/interfaces";
 import { useCachedResource } from "../../hooks/useCachedResource";
 import { Button } from "../../components/shadcn/Button";
 import LoadingSpin from "../../components/LoadingSpin";
-import { fmtCup, MiniMarkdown, Seccion, SelectorRango, Tabla } from "./shared";
+import { fmtCup, Seccion, SelectorRango, Tabla } from "./shared";
 
 const Analytics = () => {
   const [dias, setDias] = useState(30);
 
+  // La versión (v2) invalida cachés viejas de localStorage con la forma antigua
+  // de la respuesta (sin ventaPerdida/ticket/etc.), que rompían el render.
   const { data, loading, error } = useCachedResource<IAnaliticaResponse>(
-    `analitica:${dias}`,
+    `analitica:v2:${dias}`,
     () => getAnalitica(dias),
     { ttl: 300_000 }
   );
+
+  // Solo renderizamos cuando llegó la forma nueva completa (evita crashes si
+  // por cualquier motivo el dato cacheado fuera parcial/antiguo).
+  const datosListos = !!data?.ventaPerdida && !!data?.concentracion;
 
   // Estado del asistente IA.
   const [iaLoading, setIaLoading] = useState(false);
@@ -66,7 +73,7 @@ const Analytics = () => {
           </p>
         )}
 
-        {!loading && data && (
+        {!loading && data && datosListos && (
           <>
             <p className="text-sm text-amber-100/60 mb-8">
               {data.recibosAnalizados} ventas analizadas en {data.rango.dias}{" "}
@@ -253,7 +260,56 @@ const RespuestaIA = ({ texto }: { texto: string }) => (
       </span>
     </div>
     <div className="px-5 py-5 sm:px-6">
-      <MiniMarkdown texto={texto} />
+      <ReactMarkdown
+        components={{
+          h1: ({ children }) => (
+            <h3 className="mt-6 mb-3 text-lg font-semibold text-amber-50 first:mt-0">
+              {children}
+            </h3>
+          ),
+          h2: ({ children }) => (
+            <h3 className="mt-6 mb-3 flex items-center gap-2 text-base font-semibold uppercase tracking-wide text-emerald-300 first:mt-0">
+              {children}
+            </h3>
+          ),
+          h3: ({ children }) => (
+            <h4 className="mt-5 mb-2 text-sm font-semibold text-amber-100 first:mt-0">
+              {children}
+            </h4>
+          ),
+          p: ({ children }) => (
+            <p className="mb-3 text-sm leading-relaxed text-emerald-50/90 last:mb-0">
+              {children}
+            </p>
+          ),
+          strong: ({ children }) => (
+            <strong className="font-semibold text-amber-200">{children}</strong>
+          ),
+          ul: ({ children }) => (
+            <ul className="mb-4 list-disc space-y-2 pl-5 marker:text-emerald-400/70 last:mb-0">
+              {children}
+            </ul>
+          ),
+          ol: ({ children }) => (
+            <ol className="mb-4 list-decimal space-y-2 pl-5 marker:font-semibold marker:text-emerald-300/80 last:mb-0">
+              {children}
+            </ol>
+          ),
+          li: ({ children }) => (
+            <li className="pl-1 text-sm leading-relaxed text-emerald-50/90">
+              {children}
+            </li>
+          ),
+          hr: () => <hr className="my-5 border-emerald-400/15" />,
+          a: ({ children, href }) => (
+            <a href={href} className="text-emerald-300 underline">
+              {children}
+            </a>
+          ),
+        }}
+      >
+        {texto}
+      </ReactMarkdown>
     </div>
   </div>
 );

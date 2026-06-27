@@ -22,10 +22,13 @@ const AnalyticsVentas = () => {
 
   // Comparte caché con la pantalla "Resumen" (misma clave por rango).
   const { data, loading, error } = useCachedResource<IAnaliticaResponse>(
-    `analitica:${dias}`,
+    `analitica:v2:${dias}`,
     () => getAnalitica(dias),
     { ttl: 300_000 }
   );
+
+  // Solo renderizamos con la forma nueva completa (evita crashes con caché vieja).
+  const datosListos = !!data?.ticket && !!data?.temporal;
 
   // Inventario inmóvil: recurso aparte (pesado), no bloquea el resto.
   const {
@@ -56,7 +59,7 @@ const AnalyticsVentas = () => {
           </p>
         )}
 
-        {!loading && data && (
+        {!loading && data && datosListos && (
           <>
             {/* ---------- KPIs ---------- */}
             <div className="mb-10 grid grid-cols-1 gap-4 sm:grid-cols-3">

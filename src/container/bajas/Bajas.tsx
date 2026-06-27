@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { DateTime } from "luxon";
+import { X } from "lucide-react";
 import { getBajas } from "../../Api/castilloApi";
 import { IBajasResponse } from "../../interfaces/interfaces";
 import { useCachedResource } from "../../hooks/useCachedResource";

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import ReactMarkdown from "react-markdown";
 import {
   AlertTriangle,
   Boxes,
@@ -79,13 +80,7 @@ const Analytics = () => {
             <Sparkles className="size-4" />
             {iaLoading ? "Analizando..." : "Pregúntale a la IA"}
           </Button>
-          {iaTexto && (
-            <div className="mt-4 rounded-xl border border-emerald-400/20 bg-emerald-400/5 p-4">
-              <p className="text-sm text-emerald-100 whitespace-pre-wrap leading-relaxed">
-                {iaTexto}
-              </p>
-            </div>
-          )}
+          {iaTexto && <RespuestaIA texto={iaTexto} />}
         </div>
 
         {loading && <LoadingSpin />}
@@ -364,5 +359,70 @@ const ChipABC = ({ clase }: { clase: "A" | "B" | "C" | "-" }) => {
     </span>
   );
 };
+
+// ---------- Respuesta del asistente IA (Markdown estilizado) ----------
+
+const RespuestaIA = ({ texto }: { texto: string }) => (
+  <div className="mt-4 rounded-2xl border border-emerald-400/20 bg-gradient-to-b from-emerald-400/[0.07] to-emerald-400/[0.02] overflow-hidden">
+    <div className="flex items-center gap-2 border-b border-emerald-400/15 bg-emerald-400/5 px-5 py-3">
+      <Sparkles className="size-4 text-emerald-300" />
+      <span className="text-sm font-semibold tracking-wide text-emerald-200">
+        Análisis de la IA
+      </span>
+    </div>
+    <div className="px-5 py-5 sm:px-6">
+      <ReactMarkdown
+        components={{
+          h1: ({ children }) => (
+            <h3 className="mt-6 mb-3 text-lg font-semibold text-amber-50 first:mt-0">
+              {children}
+            </h3>
+          ),
+          h2: ({ children }) => (
+            <h3 className="mt-6 mb-3 flex items-center gap-2 text-base font-semibold uppercase tracking-wide text-emerald-300 first:mt-0">
+              {children}
+            </h3>
+          ),
+          h3: ({ children }) => (
+            <h4 className="mt-5 mb-2 text-sm font-semibold text-amber-100 first:mt-0">
+              {children}
+            </h4>
+          ),
+          p: ({ children }) => (
+            <p className="mb-3 text-sm leading-relaxed text-emerald-50/90 last:mb-0">
+              {children}
+            </p>
+          ),
+          strong: ({ children }) => (
+            <strong className="font-semibold text-amber-200">{children}</strong>
+          ),
+          ul: ({ children }) => (
+            <ul className="mb-4 list-disc space-y-2 pl-5 marker:text-emerald-400/70 last:mb-0">
+              {children}
+            </ul>
+          ),
+          ol: ({ children }) => (
+            <ol className="mb-4 list-decimal space-y-2 pl-5 marker:font-semibold marker:text-emerald-300/80 last:mb-0">
+              {children}
+            </ol>
+          ),
+          li: ({ children }) => (
+            <li className="pl-1 text-sm leading-relaxed text-emerald-50/90">
+              {children}
+            </li>
+          ),
+          hr: () => <hr className="my-5 border-emerald-400/15" />,
+          a: ({ children, href }) => (
+            <a href={href} className="text-emerald-300 underline">
+              {children}
+            </a>
+          ),
+        }}
+      >
+        {texto}
+      </ReactMarkdown>
+    </div>
+  </div>
+);
 
 export default Analytics;

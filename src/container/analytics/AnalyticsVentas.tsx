@@ -1,5 +1,15 @@
 import { useState } from "react";
 import {
+  Area,
+  AreaChart,
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  XAxis,
+  YAxis,
+} from "recharts";
+import {
   Boxes,
   CalendarDays,
   Clock,
@@ -8,14 +18,24 @@ import {
   TrendingDown,
   TrendingUp,
 } from "lucide-react";
-import { getAnalitica, getInventarioInmovil } from "../../Api/castilloApi";
-import {
-  IAnaliticaResponse,
-  IInventarioInmovilResponse,
-} from "../../interfaces/interfaces";
+import { getAnalitica } from "../../Api/castilloApi";
+import { IAnaliticaResponse } from "../../interfaces/interfaces";
 import { useCachedResource } from "../../hooks/useCachedResource";
 import LoadingSpin from "../../components/LoadingSpin";
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+  type ChartConfig,
+} from "../../components/shadcn/Chart";
 import { fmtCup, Seccion, SelectorRango, Tabla } from "./shared";
+
+const COLOR_INGRESOS = "#34d399"; // emerald-400
+const COLOR_PICO = "#fbbf24"; // amber-400
+
+const chartConfig: ChartConfig = {
+  ingresos: { label: "Ingresos", color: COLOR_INGRESOS },
+};
 
 const AnalyticsVentas = () => {
   const [dias, setDias] = useState(30);
@@ -29,16 +49,6 @@ const AnalyticsVentas = () => {
 
   // Solo renderizamos con la forma nueva completa (evita crashes con caché vieja).
   const datosListos = !!data?.ticket && !!data?.temporal;
-
-  // Inventario inmóvil: recurso aparte (pesado), no bloquea el resto.
-  const {
-    data: inmovil,
-    loading: inmovilLoading,
-  } = useCachedResource<IInventarioInmovilResponse>(
-    "analitica:inmovil",
-    () => getInventarioInmovil(),
-    { ttl: 3_600_000 }
-  );
 
   return (
     <div className="w-full min-h-screen p-4 lg:p-8">
@@ -67,9 +77,7 @@ const AnalyticsVentas = () => {
                 icono={<Receipt className="size-5 text-amber-300" />}
                 etiqueta="Ticket promedio"
                 valor={fmtCup(data.ticket.promedio)}
-                pie={
-                  <Tendencia pct={data.ticket.tendenciaPct} />
-                }
+                pie={<Tendencia pct={data.ticket.tendenciaPct} />}
               />
               <KpiCard
                 icono={<Clock className="size-5 text-emerald-300" />}
@@ -100,40 +108,130 @@ const AnalyticsVentas = () => {
               subtitulo="Ingresos por hora del día y por día de la semana."
             >
               <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-                <Barras
-                  titulo="Por hora"
-                  datos={data.temporal.porHora.map((h) => ({
-                    etiqueta: `${h.hora}`,
-                    valor: h.ingresos,
-                    destacado: h.hora === data.temporal.horaPico,
-                  }))}
-                />
-                <Barras
-                  titulo="Por día de la semana"
-                  datos={data.temporal.porDia.map((d) => ({
-                    etiqueta: d.nombre.slice(0, 3),
-                    valor: d.ingresos,
-                    destacado: d.nombre === data.temporal.diaPico,
-                  }))}
-                />
+                <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+                  <p className="mb-3 text-sm font-medium text-amber-100/80">
+                    Por hora
+                  </p>
+                  <ChartContainer config={chartConfig} className="h-48 w-full">
+                    <BarChart
+                      data={data.temporal.porHora.map((h) => ({
+                        etiqueta: `${h.hora}`,
+                        ingresos: h.ingresos,
+                        pico: h.hora === data.temporal.horaPico,
+                      }))}
+                    >
+                      <CartesianGrid vertical={false} />
+                      <XAxis
+                        dataKey="etiqueta"
+                        tickLine={false}
+                        axisLine={false}
+                        interval={1}
+                      />
+                      <ChartTooltip
+                        content={
+                          <ChartTooltipContent
+                            formatter={(v) => fmtCup(v)}
+                            labelFormatter={(l) => `${l}:00`}
+                          />
+                        }
+                      />
+                      <Bar dataKey="ingresos" radius={[4, 4, 0, 0]}>
+                        {data.temporal.porHora.map((h, i) => (
+                          <Cell
+                            key={i}
+                            fill={
+                              h.hora === data.temporal.horaPico
+                                ? COLOR_PICO
+                                : COLOR_INGRESOS
+                            }
+                          />
+                        ))}
+                      </Bar>
+                    </BarChart>
+                  </ChartContainer>
+                </div>
+
+                <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+                  <p className="mb-3 text-sm font-medium text-amber-100/80">
+                    Por día de la semana
+                  </p>
+                  <ChartContainer config={chartConfig} className="h-48 w-full">
+                    <BarChart
+                      data={data.temporal.porDia.map((d) => ({
+                        etiqueta: d.nombre.slice(0, 3),
+                        ingresos: d.ingresos,
+                      }))}
+                    >
+                      <CartesianGrid vertical={false} />
+                      <XAxis
+                        dataKey="etiqueta"
+                        tickLine={false}
+                        axisLine={false}
+                      />
+                      <ChartTooltip
+                        content={
+                          <ChartTooltipContent formatter={(v) => fmtCup(v)} />
+                        }
+                      />
+                      <Bar dataKey="ingresos" radius={[4, 4, 0, 0]}>
+                        {data.temporal.porDia.map((d, i) => (
+                          <Cell
+                            key={i}
+                            fill={
+                              d.nombre === data.temporal.diaPico
+                                ? COLOR_PICO
+                                : COLOR_INGRESOS
+                            }
+                          />
+                        ))}
+                      </Bar>
+                    </BarChart>
+                  </ChartContainer>
+                </div>
               </div>
             </Seccion>
 
-            {/* ---------- Evolución del ticket / ingresos ---------- */}
+            {/* ---------- Evolución de las ventas ---------- */}
             <Seccion
               icono={<TrendingUp className="size-5 text-emerald-400" />}
               titulo="Evolución de las ventas"
               subtitulo="Ingresos por día en el rango seleccionado."
             >
-              <Barras
-                titulo=""
-                datos={data.ticket.serie.map((s) => ({
-                  etiqueta: s.fecha.slice(5), // MM-DD
-                  valor: s.ingresos,
-                  destacado: false,
-                }))}
-                compacta
-              />
+              <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+                <ChartContainer config={chartConfig} className="h-56 w-full">
+                  <AreaChart
+                    data={data.ticket.serie.map((s) => ({
+                      etiqueta: s.fecha.slice(5),
+                      ingresos: s.ingresos,
+                    }))}
+                  >
+                    <defs>
+                      <linearGradient id="fillIngresos" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor={COLOR_INGRESOS} stopOpacity={0.4} />
+                        <stop offset="95%" stopColor={COLOR_INGRESOS} stopOpacity={0.05} />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid vertical={false} />
+                    <XAxis
+                      dataKey="etiqueta"
+                      tickLine={false}
+                      axisLine={false}
+                      minTickGap={24}
+                    />
+                    <YAxis hide />
+                    <ChartTooltip
+                      content={<ChartTooltipContent formatter={(v) => fmtCup(v)} />}
+                    />
+                    <Area
+                      dataKey="ingresos"
+                      type="monotone"
+                      stroke={COLOR_INGRESOS}
+                      strokeWidth={2}
+                      fill="url(#fillIngresos)"
+                    />
+                  </AreaChart>
+                </ChartContainer>
+              </div>
             </Seccion>
 
             {/* ---------- Concentración (Pareto) ---------- */}
@@ -168,34 +266,20 @@ const AnalyticsVentas = () => {
               </p>
             </Seccion>
 
-            {/* ---------- Inventario inmóvil (recurso aparte) ---------- */}
+            {/* ---------- Inventario inmóvil ---------- */}
             <Seccion
               icono={<Boxes className="size-5 text-orange-400" />}
               titulo="Inventario inmóvil"
-              subtitulo={
-                inmovil
-                  ? `${fmtCup(
-                      inmovil.totalCapital
-                    )} inmovilizados en productos sin vender (mira ${
-                      inmovil.lookbackDias
-                    } días atrás).`
-                  : "Stock que no se vende, por antigüedad."
-              }
+              subtitulo={`${fmtCup(
+                data.inventarioInmovil.totalCapital
+              )} inmovilizados en productos que no se venden en el rango.`}
             >
-              {inmovilLoading && (
-                <div className="rounded-xl border border-white/10 bg-white/5 p-8 text-center text-sm text-amber-100/60">
-                  Calculando antigüedad del inventario… (puede tardar la primera
-                  vez)
-                </div>
-              )}
-              {!inmovilLoading && inmovil && inmovil.buckets.length === 0 && (
+              {data.inventarioInmovil.buckets.length === 0 ? (
                 <p className="rounded-xl border border-white/10 bg-white/5 p-8 text-center text-emerald-300">
                   No hay inventario inmóvil. ¡Bien!
                 </p>
-              )}
-              {!inmovilLoading &&
-                inmovil &&
-                inmovil.buckets.map((b) => (
+              ) : (
+                data.inventarioInmovil.buckets.map((b) => (
                   <div key={b.etiqueta} className="mb-6">
                     <div className="mb-2 flex items-center justify-between">
                       <h4 className="text-sm font-semibold text-orange-200">
@@ -220,7 +304,7 @@ const AnalyticsVentas = () => {
                           <span className="text-gray-300">{i.stock}</span>,
                           <span className="text-gray-300">
                             {i.diasSinVenta === null
-                              ? "Nunca / +120d"
+                              ? "Sin ventas en el rango"
                               : `hace ${i.diasSinVenta} días`}
                           </span>,
                           <span className="text-orange-300">
@@ -230,7 +314,8 @@ const AnalyticsVentas = () => {
                       }))}
                     />
                   </div>
-                ))}
+                ))
+              )}
             </Seccion>
           </>
         )}
@@ -308,57 +393,5 @@ const MiniStat = ({
     <p className="mt-1 text-xs text-amber-100/60">{etiqueta}</p>
   </div>
 );
-
-// Gráfico de barras vertical sencillo (CSS puro), normalizado al máximo.
-const Barras = ({
-  titulo,
-  datos,
-  compacta,
-}: {
-  titulo: string;
-  datos: { etiqueta: string; valor: number; destacado?: boolean }[];
-  compacta?: boolean;
-}) => {
-  const max = Math.max(1, ...datos.map((d) => d.valor));
-  return (
-    <div className="rounded-xl border border-white/10 bg-white/5 p-4">
-      {titulo && (
-        <p className="mb-3 text-sm font-medium text-amber-100/80">{titulo}</p>
-      )}
-      <div className="flex h-40 items-end gap-1 overflow-x-auto">
-        {datos.map((d, i) => (
-          <div
-            key={i}
-            className="group flex min-w-0 flex-1 flex-col items-center justify-end"
-            title={`${d.etiqueta}: ${fmtCup(d.valor)}`}
-          >
-            <div
-              className={`w-full rounded-t transition-all ${
-                d.destacado
-                  ? "bg-amber-400/90"
-                  : "bg-emerald-500/50 group-hover:bg-emerald-400/70"
-              }`}
-              style={{
-                height: `${Math.max(2, (d.valor / max) * 100)}%`,
-                minWidth: compacta ? 4 : 8,
-              }}
-            />
-            {!compacta && (
-              <span className="mt-1 text-[10px] text-amber-100/50">
-                {d.etiqueta}
-              </span>
-            )}
-          </div>
-        ))}
-      </div>
-      {compacta && (
-        <div className="mt-1 flex justify-between text-[10px] text-amber-100/40">
-          <span>{datos[0]?.etiqueta}</span>
-          <span>{datos[datos.length - 1]?.etiqueta}</span>
-        </div>
-      )}
-    </div>
-  );
-};
 
 export default AnalyticsVentas;

@@ -277,8 +277,7 @@ export interface IInventarioInmovilItem {
   diasSinVenta: number | null;
   ultimaVenta: string | null;
 }
-export interface IInventarioInmovilResponse {
-  lookbackDias: number;
+export interface IInventarioInmovil {
   buckets: {
     etiqueta: string;
     items: IInventarioInmovilItem[];
@@ -322,6 +321,7 @@ export interface IAnaliticaResponse {
   temporal: ITemporal;
   ticket: ITicketAnalisis;
   concentracion: IConcentracion;
+  inventarioInmovil: IInventarioInmovil;
 }
 
 export interface IAsistenteResponse {

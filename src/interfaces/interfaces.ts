@@ -190,3 +190,64 @@ export interface IInventarioResponse {
   productosValidosCount: number;
   totalInvertido: number;
 }
+
+// ----------------------- Analítica (IA / algoritmos) -----------------------
+
+export interface IReposicionItem {
+  variantId: string;
+  itemName: string;
+  stock: number;
+  vendidoEnRango: number;
+  velocidadDia: number;
+  diasParaAgotar: number | null;
+  sugerenciaCompra: number;
+  costo: number;
+  agotado: boolean;
+}
+
+export interface IMargenItem {
+  variantId: string;
+  itemName: string;
+  costo: number;
+  precio: number;
+  margenPct: number;
+  unidadesVendidas: number;
+  ingresos: number;
+  ganancia: number;
+  claseABC: "A" | "B" | "C" | "-";
+  bajoMargen: boolean;
+}
+
+export interface ICapitalParadoItem {
+  variantId: string;
+  itemName: string;
+  stock: number;
+  costo: number;
+  capitalInmovilizado: number;
+}
+
+export interface IComboItem {
+  itemA: string;
+  itemB: string;
+  veces: number;
+  confianza: number;
+  lift: number;
+}
+
+export interface IAnaliticaResponse {
+  rango: { desde: string; hasta: string; dias: number };
+  recibosAnalizados: number;
+  coberturaObjetivoDias: number;
+  reposicion: IReposicionItem[];
+  margenes: {
+    items: IMargenItem[];
+    capitalParado: ICapitalParadoItem[];
+    totalCapitalParado: number;
+  };
+  combos: IComboItem[];
+}
+
+export interface IAsistenteResponse {
+  ok: boolean;
+  mensaje: string;
+}

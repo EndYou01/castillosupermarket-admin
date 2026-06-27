@@ -11,6 +11,8 @@ import {
   IPatrimonioSnapshot,
   ITransformarPayload,
   IVentasResponse,
+  IAnaliticaResponse,
+  IAsistenteResponse,
 } from '../interfaces/interfaces';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL;
@@ -362,5 +364,62 @@ export const getInventario = async () => {
   } catch (error) {
     console.error("Error obteniendo inventario:", error);
     return null;
+  }
+};
+
+// ----------------------- Analítica del negocio -----------------------
+
+// Calcula el rango UTC para "últimos N días" (mismo criterio que las ventas).
+const rangoUltimosDias = (dias: number) => {
+  const now = DateTime.now().setZone("America/Havana");
+  const desde = now
+    .minus({ days: dias - 1 })
+    .startOf("day")
+    .toUTC()
+    .toISO();
+  const hasta = now.endOf("day").toUTC().toISO();
+  return { desde, hasta };
+};
+
+// Análisis completo (reposición, márgenes/ABC, combos) de los últimos N días.
+export const getAnalitica = async (
+  dias = 30
+): Promise<IAnaliticaResponse | null> => {
+  const { desde, hasta } = rangoUltimosDias(dias);
+  try {
+    const response = await fetch(
+      `${API_BASE_URL}/analytics/resumen?desde=${desde}&hasta=${hasta}`,
+      { method: "GET" }
+    );
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    return await response.json();
+  } catch (error) {
+    console.error("Error obteniendo analítica:", error);
+    return null;
+  }
+};
+
+// Pide a la IA gratuita (Gemini) una explicación en español de los últimos N días.
+export const getAsistenteIA = async (
+  dias = 30,
+  pregunta?: string
+): Promise<IAsistenteResponse> => {
+  const { desde, hasta } = rangoUltimosDias(dias);
+  try {
+    const response = await fetch(`${API_BASE_URL}/analytics/asistente`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ desde, hasta, pregunta }),
+    });
+    if (!response.ok) {
+      return {
+        ok: false,
+        mensaje: `No se pudo conectar con la IA (error ${response.status}).`,
+      };
+    }
+    return await response.json();
+  } catch (error) {
+    console.error("Error con el asistente IA:", error);
+    return { ok: false, mensaje: "No se pudo conectar con la IA." };
   }
 };

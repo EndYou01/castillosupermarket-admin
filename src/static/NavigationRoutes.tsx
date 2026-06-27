@@ -1,10 +1,11 @@
-import { SquareTerminal, Store } from "lucide-react";
+import { SquareTerminal, Store, LineChart } from "lucide-react";
 import { INavigationRoute } from "../interfaces/interfaces";
 import Dashboard from "../container/dashboard/Dashboard";
 import Inventory from "../container/inventory/Inventory";
 import Capital from "../container/capital/Capital";
 import Bajas from "../container/bajas/Bajas";
 import Patrimonio from "../container/patrimonio/Patrimonio";
+import Analytics from "../container/analytics/Analytics";
 
 export const NavigationRoutes: INavigationRoute[] = [
   {
@@ -46,6 +47,19 @@ export const NavigationRoutes: INavigationRoute[] = [
         title: "Patrimonio",
         url: "/marketplace/patrimonio",
         element: <Patrimonio />,
+      },
+    ],
+    isActive: false,
+  },
+  {
+    title: "Analítica",
+    url: "/analytics",
+    icon: LineChart,
+    items: [
+      {
+        title: "Analítica",
+        url: "/analytics/resumen",
+        element: <Analytics />,
       },
     ],
     isActive: false,

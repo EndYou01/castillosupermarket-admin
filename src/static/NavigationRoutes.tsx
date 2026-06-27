@@ -57,7 +57,7 @@ export const NavigationRoutes: INavigationRoute[] = [
     icon: LineChart,
     items: [
       {
-        title: "Analítica",
+        title: "Resumen",
         url: "/analytics/resumen",
         element: <Analytics />,
       },

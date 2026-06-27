@@ -274,60 +274,80 @@ const Tabla = ({
   headers,
   filas,
   vacio,
+  limite = 10,
 }: {
   headers: string[];
   filas: { key: string; celdas: React.ReactNode[]; destacar?: boolean }[];
   vacio: string;
-}) => (
-  <div className="bg-white/5 border border-white/10 rounded-xl overflow-hidden">
-    <div className="overflow-x-auto">
-      <table className="w-full text-sm">
-        <thead>
-          <tr className="border-b border-white/10 text-gray-300">
-            {headers.map((h, i) => (
-              <th
-                key={h}
-                className={`py-3 px-5 font-medium ${
-                  i === 0 ? "text-left" : "text-right"
-                }`}
-              >
-                {h}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {filas.map((fila, idx) => (
-            <tr
-              key={fila.key}
-              className={`border-b border-white/5 ${
-                fila.destacar
-                  ? "bg-red-500/5"
-                  : idx % 2 === 0
-                  ? "bg-white/[0.02]"
-                  : ""
-              }`}
-            >
-              {fila.celdas.map((celda, i) => (
-                <td
-                  key={i}
-                  className={`py-3 px-5 ${
+  limite?: number;
+}) => {
+  // Las filas ya vienen ordenadas por importancia desde el backend, así que
+  // mostramos solo las primeras `limite` (las más relevantes) hasta expandir.
+  const [expandido, setExpandido] = useState(false);
+  const hayMas = filas.length > limite;
+  const visibles = expandido ? filas : filas.slice(0, limite);
+
+  return (
+    <div className="bg-white/5 border border-white/10 rounded-xl overflow-hidden">
+      <div className="overflow-x-auto">
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="border-b border-white/10 text-gray-300">
+              {headers.map((h, i) => (
+                <th
+                  key={h}
+                  className={`py-3 px-5 font-medium ${
                     i === 0 ? "text-left" : "text-right"
                   }`}
                 >
-                  {celda}
-                </td>
+                  {h}
+                </th>
               ))}
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {visibles.map((fila, idx) => (
+              <tr
+                key={fila.key}
+                className={`border-b border-white/5 ${
+                  fila.destacar
+                    ? "bg-red-500/5"
+                    : idx % 2 === 0
+                    ? "bg-white/[0.02]"
+                    : ""
+                }`}
+              >
+                {fila.celdas.map((celda, i) => (
+                  <td
+                    key={i}
+                    className={`py-3 px-5 ${
+                      i === 0 ? "text-left" : "text-right"
+                    }`}
+                  >
+                    {celda}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      {filas.length === 0 && (
+        <p className="p-10 text-center text-gray-400">{vacio}</p>
+      )}
+      {hayMas && (
+        <button
+          onClick={() => setExpandido((v) => !v)}
+          className="w-full py-3 text-sm font-medium text-amber-200 hover:bg-white/5 transition-colors border-t border-white/10"
+        >
+          {expandido
+            ? "Ver menos"
+            : `Ver más (${filas.length - limite} restantes)`}
+        </button>
+      )}
     </div>
-    {filas.length === 0 && (
-      <p className="p-10 text-center text-gray-400">{vacio}</p>
-    )}
-  </div>
-);
+  );
+};
 
 const ChipABC = ({ clase }: { clase: "A" | "B" | "C" | "-" }) => {
   const color =

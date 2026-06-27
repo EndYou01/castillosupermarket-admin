@@ -38,6 +38,26 @@ const Bajas = () => {
       : data.bajas.filter((b) => b.motivo === motivoFilter)
     : [];
 
+  const hayFiltro = motivoFilter !== "todos";
+
+  // Estadísticas recalculadas según el filtro (misma lógica que el backend).
+  const stats = useMemo(() => {
+    const totalCosto = bajasFiltradas.reduce(
+      (s, b) => s + b.costoUnitario * b.cantidad,
+      0
+    );
+    const totalPartePagada = bajasFiltradas.reduce(
+      (s, b) => s + b.partePagada,
+      0
+    );
+    return {
+      totalCosto,
+      totalPartePagada,
+      totalNeto: totalCosto - totalPartePagada,
+      cantidadBajas: bajasFiltradas.length,
+    };
+  }, [bajasFiltradas]);
+
   return (
     <div className="w-full min-h-screen p-4 lg:p-8">
       <div className="mx-auto max-w-5xl">
@@ -45,20 +65,50 @@ const Bajas = () => {
           <h2 className="text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl">
             Movimientos de bajas
           </h2>
-          <div className="flex items-center gap-3">
-            <Select value={motivoFilter} onValueChange={setMotivoFilter}>
-              <SelectTrigger className="w-fit">
-                <SelectValue placeholder="Todos los motivos" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="todos">Todos los motivos</SelectItem>
-                {motivosUnicos.map((motivo) => (
-                  <SelectItem key={motivo} value={motivo}>
-                    {motivo}
+          <div className="flex flex-wrap items-center gap-2">
+            <div className="flex items-center">
+              <Select value={motivoFilter} onValueChange={setMotivoFilter}>
+                <SelectTrigger
+                  className={`h-11 w-fit max-w-[15rem] gap-2 border-amber-100/15 bg-black/20 px-4 text-amber-50 shadow-none transition hover:border-amber-100/30 focus-visible:border-amber-400/60 focus-visible:ring-2 focus-visible:ring-amber-400/30 data-[placeholder]:text-amber-100/50 [&_svg]:text-amber-100/50 ${
+                    hayFiltro ? "rounded-l-lg rounded-r-none" : "rounded-lg"
+                  }`}
+                >
+                  <SelectValue placeholder="Todos los motivos" />
+                </SelectTrigger>
+                <SelectContent
+                  style={{ backgroundColor: "#0a3d27" }}
+                  className="border-amber-100/10 text-amber-50 shadow-2xl shadow-black/50"
+                >
+                  <SelectItem
+                    value="todos"
+                    className="text-amber-100/80 focus:bg-amber-400/10 focus:text-amber-50"
+                  >
+                    Todos los motivos
                   </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+                  {motivosUnicos.map((motivo) => (
+                    <SelectItem
+                      key={motivo}
+                      value={motivo}
+                      className="text-amber-100/80 focus:bg-amber-400/10 focus:text-amber-50"
+                    >
+                      {motivo}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {hayFiltro && (
+                <button
+                  type="button"
+                  onClick={() => setMotivoFilter("todos")}
+                  aria-label="Limpiar filtro"
+                  title="Limpiar filtro"
+                  className="inline-flex h-11 items-center gap-1 rounded-r-lg border border-l-0 border-amber-100/15 bg-black/20 px-3 text-sm text-amber-100/70 transition hover:border-amber-100/30 hover:bg-black/30 hover:text-amber-50"
+                >
+                  <X className="size-4" />
+                  Limpiar
+                </button>
+              )}
+            </div>
             <MonthPicker value={mes} max={mesActual} onChange={setMes} />
           </div>
         </div>
@@ -72,25 +122,25 @@ const Bajas = () => {
               <div className="border-l-2 border-orange-400 pl-4 py-2">
                 <dt className="text-sm text-orange-400">Valor en bajas (costo)</dt>
                 <dd className="text-3xl sm:text-4xl font-semibold text-orange-400">
-                  {formatCurrency(data.totalCosto)}
+                  {formatCurrency(stats.totalCosto)}
                 </dd>
               </div>
               <div className="border-l-2 border-stone-50 pl-4 py-2">
                 <dt className="text-sm text-amber-100">Parte pagada</dt>
                 <dd className="text-3xl sm:text-4xl font-semibold text-amber-50">
-                  {formatCurrency(data.totalPartePagada)}
+                  {formatCurrency(stats.totalPartePagada)}
                 </dd>
               </div>
               <div className="border-l-2 border-stone-50 pl-4 py-2">
                 <dt className="text-sm text-amber-100">Pérdida neta</dt>
                 <dd className="text-3xl sm:text-4xl font-semibold text-amber-50">
-                  {formatCurrency(data.totalNeto)}
+                  {formatCurrency(stats.totalNeto)}
                 </dd>
               </div>
               <div className="border-l-2 border-stone-50 pl-4 py-2">
                 <dt className="text-sm text-amber-100">Cantidad de bajas</dt>
                 <dd className="text-3xl sm:text-4xl font-semibold text-amber-50">
-                  {data.cantidadBajas}
+                  {stats.cantidadBajas}
                 </dd>
               </div>
             </dl>

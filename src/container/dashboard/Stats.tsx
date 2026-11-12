@@ -258,7 +258,7 @@ const Stats = () => {
                 <dl className="grid grid-cols-4 gap-8 lg:grid-cols-4">
                   <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l border-stone-50 pl-4">
                     <dt className="text-base/7 text-amber-100">
-                      Alfonso <span className="font-thin">25%</span>
+                      Alfonso <span className="font-thin">33%</span>
                     </dt>
                     <dd className="order-first text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl">
                       {formatCurrency(distribution.jefes.alfonso)}
@@ -267,16 +267,7 @@ const Stats = () => {
 
                   <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l border-stone-50 pl-4">
                     <dt className="text-base/7 text-amber-100">
-                      Senjudo <span className="font-thin">25%</span>
-                    </dt>
-                    <dd className="order-first text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl">
-                      {formatCurrency(distribution.jefes.senjudo)}
-                    </dd>
-                  </div>
-
-                  <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l border-stone-50 pl-4">
-                    <dt className="text-base/7 text-amber-100">
-                      Josse <span className="font-thin">25%</span>
+                      Josse <span className="font-thin">33%</span>
                     </dt>
                     <dd className="order-first text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl">
                       {formatCurrency(distribution.jefes.josse)}
@@ -285,7 +276,7 @@ const Stats = () => {
 
                   <div className="mx-auto flex w-full flex-col gap-y-4 col-span-2 border-l border-stone-50 pl-4">
                     <dt className="text-base/7 text-amber-100">
-                      Julio <span className="font-thin">25%</span>
+                      Julio <span className="font-thin">33%</span>
                     </dt>
                     <dd className="order-first text-3xl font-semibold tracking-tight text-amber-50 sm:text-5xl">
                       {formatCurrency(distribution.jefes.julio)}
